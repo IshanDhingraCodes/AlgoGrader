@@ -35,3 +35,24 @@ export const authMiddleware = asyncHandler(async (req, res, next) => {
 
   next();
 });
+
+export const checkAdmin = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  if (!user || user.role !== "ADMIN") {
+    return res
+      .status(403)
+      .json(new ApiError(403, "Access denied - Admins only"));
+  }
+
+  next();
+});
