@@ -232,5 +232,23 @@ export const updateProblem = asyncHandler(async (req, res) => {
     );
 });
 
-export const deleteProblem = asyncHandler(async (req, res) => {});
+export const deleteProblem = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const problem = await db.problem.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!problem) {
+    return res.status(404).json(new ApiError(404, "Problem not found."));
+  }
+
+  await db.problem.delete({ where: { id } });
+
+  return res.status(200).json(new ApiResponse(200, null, "Problem deleted successfully."))
+
+});
+
 export const getAllProblemsSolvedByUser = asyncHandler(async (req, res) => {});
