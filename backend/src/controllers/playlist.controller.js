@@ -94,5 +94,20 @@ export const addProblemToPlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-export const deletePlaylist = asyncHandler(async (req, res) => {});
+export const deletePlaylist = asyncHandler(async (req, res) => {
+  const { playlistId } = req.params;
+
+  const deletePlaylist = await db.playlist.delete({
+    where: {
+      id: playlistId,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, deletePlaylist, "Playlist deleted successfully."),
+    );
+});
+
 export const removeProblemFromPlaylist = asyncHandler(async (req, res) => {});
