@@ -40,7 +40,32 @@ export const getAllListDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, playlists, "Playlists fetched successfully."));
 });
 
-export const getPlayListDetails = asyncHandler(async (req, res) => {});
+export const getPlayListDetails = asyncHandler(async (req, res) => {
+  const { playlistId } = req.params;
+
+  const playlist = await db.playlist.findUnique({
+    where: {
+      id: playlistId,
+      userId: req.user.id,
+    },
+    include: {
+      problems: {
+        include: {
+          problem: true,
+        },
+      },
+    },
+  });
+
+  if (!playlist) {
+    return res.status(404).json(new ApiError(404, "Playlist not found."));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, playlist, "Playlist fetched successfully."));
+});
+
 export const addProblemToPlaylist = asyncHandler(async (req, res) => {});
 export const deletePlaylist = asyncHandler(async (req, res) => {});
 export const removeProblemFromPlaylist = asyncHandler(async (req, res) => {});
