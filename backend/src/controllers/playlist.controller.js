@@ -110,4 +110,32 @@ export const deletePlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-export const removeProblemFromPlaylist = asyncHandler(async (req, res) => {});
+export const removeProblemFromPlaylist = asyncHandler(async (req, res) => {
+  const { playlistId } = req.params;
+  const { problemIds } = req.body;
+
+  if (!Array.isArray(problemIds) || problemIds.length === 0) {
+    return res
+      .status(400)
+      .json(new ApiError(400, "Invalid or missing problemsId"));
+  }
+
+  const deleteProblem = await db.problemsInPlaylist.deleteMany({
+    where: {
+      playlistId,
+      problemId: {
+        in: problemIds,
+      },
+    },
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        deleteProblem,
+        "Problem removed from playlist successfully.",
+      ),
+    );
+});
