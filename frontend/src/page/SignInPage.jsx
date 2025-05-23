@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { SignInSchema } from "../schema/auth.validations";
 import { authImage, logo } from "../assets";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { isLoggingIn, login } = useAuthStore();
 
   const {
     register,
@@ -16,7 +19,11 @@ const SignInPage = () => {
   } = useForm({ resolver: zodResolver(SignInSchema) });
 
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      await login(data);
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
   };
 
   return (
@@ -101,8 +108,18 @@ const SignInPage = () => {
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="btn btn-primary w-full rounded-xl">
-              Sign In
+            <button
+              type="submit"
+              className="btn btn-primary w-full rounded-xl"
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
 

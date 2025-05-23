@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { SignUpSchema } from "../schema/auth.validations";
 import { authImage, logo } from "../assets";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { signup, isSigninUp } = useAuthStore();
 
   const {
     register,
@@ -16,7 +19,12 @@ const SignUpPage = () => {
   } = useForm({ resolver: zodResolver(SignUpSchema) });
 
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      await signup(data);
+      // console.log("SignUp data:", data);
+    } catch (error) {
+      console.error("SignUp failed:", error);
+    }
   };
 
   return (
@@ -126,8 +134,18 @@ const SignUpPage = () => {
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="btn btn-primary w-full rounded-xl">
-              Sign Up
+            <button
+              type="submit"
+              className="btn btn-primary w-full rounded-xl"
+              disabled={isSigninUp}
+            >
+              {isSigninUp ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </>
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </form>
 
