@@ -1,6 +1,6 @@
 import HomePage from "./HomePage";
 import Landing from "./Landing";
-import LoginPage from "./LoginPage";
+import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 
-export { HomePage, Landing, LoginPage, SignUpPage };
+export { HomePage, Landing, SignInPage, SignUpPage };

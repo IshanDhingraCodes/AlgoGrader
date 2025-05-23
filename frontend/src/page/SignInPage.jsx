@@ -3,17 +3,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { SignUpSchema } from "../schema/auth.validations";
+import { SignInSchema } from "../schema/auth.validations";
 import { authImage, logo } from "../assets";
 
-const SignUpPage = () => {
+const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(SignUpSchema) });
+  } = useForm({ resolver: zodResolver(SignInSchema) });
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -31,7 +31,7 @@ const SignUpPage = () => {
               </h1>
             </Link>
             <div className="space-y-4">
-              <h1 className="text-5xl font-bold mt-2">Sign Up</h1>
+              <h1 className="text-5xl font-bold mt-2">Sign In</h1>
               <p className="text-lg text-base-content/60">
                 Please enter your details.
               </p>
@@ -39,31 +39,6 @@ const SignUpPage = () => {
           </header>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* name */}
-            <div className="form-control space-y-2">
-              <label className="label">
-                <span className="label-text font-medium">Name</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Code className="h-5 w-5 text-base-content/40 z-10" />
-                </div>
-                <input
-                  type="text"
-                  {...register("name")}
-                  className={`input input-bordered w-full pl-10 ${
-                    errors.name ? "input-error" : ""
-                  }`}
-                  placeholder="John Doe"
-                />
-              </div>
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
             {/* Email */}
             <div className="form-control space-y-2">
               <label className="label">
@@ -127,15 +102,15 @@ const SignUpPage = () => {
 
             {/* Submit Button */}
             <button type="submit" className="btn btn-primary w-full rounded-xl">
-              Sign Up
+              Sign In
             </button>
           </form>
 
           <div className="text-center">
             <p className="text-base-content/60">
-              Already have an account?{" "}
-              <Link to="/sign-in" className="link link-success">
-                Sign In
+              Don't have an account?{" "}
+              <Link to="/sign-up" className="link link-success">
+                Sign Up
               </Link>
             </p>
           </div>
@@ -157,4 +132,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default SignInPage;

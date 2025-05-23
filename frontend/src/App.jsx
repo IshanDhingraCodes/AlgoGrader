@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { HomePage, Landing, LoginPage, SignUpPage } from "./page";
+import { HomePage, Landing, SignInPage, SignUpPage } from "./page";
 
 const App = () => {
   let authUser = null;
@@ -18,11 +18,11 @@ const App = () => {
           element={!authUser ? <Landing /> : <Navigate to={"/home"} />}
         />
         <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to={"/home"} />}
+          path="/sign-in"
+          element={!authUser ? <SignInPage /> : <Navigate to={"/home"} />}
         />
         <Route
-          path="/signup"
+          path="/sign-up"
           element={!authUser ? <SignUpPage /> : <Navigate to={"/home"} />}
         />
         <Route
