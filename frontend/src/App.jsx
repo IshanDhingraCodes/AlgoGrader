@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { HomePage, Landing, LoginPage, SignUpPage } from "./page";
 
 const App = () => {
   let authUser = null;
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", storedTheme);
+  }, []);
 
   return (
     <>
