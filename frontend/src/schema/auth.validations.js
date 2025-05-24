@@ -23,12 +23,7 @@ const SignInSchema = z.object({
     .string()
     .email("Enter a valid email.")
     .transform((val) => val.toLowerCase()),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters.")
-    .regex(/[A-Z]/, "Password must include at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must include at least one number.")
-    .regex(/[a-z]/, "Password must include at least one lowercase letter."),
+  password: z.string().min(6, "Invalid Credentials"),
 });
 
 export { SignUpSchema, SignInSchema };

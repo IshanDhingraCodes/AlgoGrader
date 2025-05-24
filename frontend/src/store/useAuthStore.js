@@ -12,7 +12,7 @@ export const useAuthStore = create((set) => ({
     set({ isCheckingAuth: true });
     try {
       const res = await axiosInstance.get("/auth/check");
-      console.log("checkauth response", res.data);
+      // console.log("checkauth response", res.data);
 
       set({ authUser: res.data.data.user });
     } catch (error) {
@@ -27,8 +27,8 @@ export const useAuthStore = create((set) => ({
     set({ isSigninUp: true });
     try {
       const res = await axiosInstance.post("/auth/register", data);
-
-      set({ authUser: res.data.user });
+      // console.log("signUp data:", data);
+      set({ authUser: res.data });
 
       toast.success(res.data.message);
     } catch (error) {
@@ -43,8 +43,8 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-
-      set({ authUser: res.data.user });
+      // console.log("signin data: ", data);
+      set({ authUser: res.data });
 
       toast.success(res.data.message);
     } catch (error) {

@@ -22,7 +22,7 @@ const SignInPage = () => {
     try {
       await login(data);
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("SignIn failed:", error);
     }
   };
 
