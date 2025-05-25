@@ -131,6 +131,14 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ForgotPasswordTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  email: 'email',
+  token: 'token',
+  expires: 'expires'
+};
+
 exports.Prisma.ProblemScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -244,6 +252,7 @@ exports.Difficulty = exports.$Enums.Difficulty = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  ForgotPasswordToken: 'ForgotPasswordToken',
   Problem: 'Problem',
   Submission: 'Submission',
   TestCaseResult: 'TestCaseResult',

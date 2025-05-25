@@ -35,10 +35,21 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  problems      Problem[]
-  submission    Submission[]
-  problemSolved ProblemSolved[]
-  playlists     Playlist[]
+  problems            Problem[]
+  submission          Submission[]
+  problemSolved       ProblemSolved[]
+  playlists           Playlist[]
+  forgotPasswordToken ForgotPasswordToken[]
+}
+
+model ForgotPasswordToken {
+  id      String   @id @default(uuid())
+  userId  String
+  email   String   @unique
+  token   String   @unique
+  expires DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Problem {

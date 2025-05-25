@@ -5,6 +5,8 @@ import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { UserRole } from "../generated/prisma/index.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { forgotPasswordMailGenContent, sendEmail } from "../utils/mail.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { email, password, name } = req.body;
@@ -129,6 +131,54 @@ export const check = asyncHandler(async (req, res) => {
         200,
         { user: req.user },
         "User authenticated successfully",
+      ),
+    );
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    return res
+      .status(401)
+      .json(new ApiError(401, "No account found with this email."));
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  const expires = new Date(Date.now() + 5 * 60 * 1000);
+
+  const forgotPasswordToken = await db.forgotPasswordToken.upsert({
+    where: { email },
+    update: { token, expires },
+    create: { email, token, expires, userId: user.id },
+  });
+
+  const verificationUrl = `http://localhost:8080/api/v1/auth/new-password/${token}`;
+
+  const mailGenContent = forgotPasswordMailGenContent(
+    user.name,
+    verificationUrl,
+  );
+
+  await sendEmail({
+    email: email,
+    subject: "Reset your password",
+    mailGenContent,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        forgotPasswordToken,
+        "ForgotPassword verification email sent successfully in your email address!.",
       ),
     );
 });
