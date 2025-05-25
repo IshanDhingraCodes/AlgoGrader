@@ -159,7 +159,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     create: { email, token, expires, userId: user.id },
   });
 
-  const verificationUrl = `http://localhost:8080/api/v1/auth/new-password/${token}`;
+  const verificationUrl = `http://localhost:8080/api/v1/auth/change-password/${token}`;
 
   const mailGenContent = forgotPasswordMailGenContent(
     user.name,
@@ -181,4 +181,54 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         "ForgotPassword verification email sent successfully in your email address!.",
       ),
     );
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const { forgotPasswordToken } = req.params;
+  const { newPassword, confirmPassword } = req.body;
+
+  if (!forgotPasswordToken) {
+    return res.status(401).json(new ApiError(401, "Token is required!"));
+  }
+
+  if (!newPassword || !confirmPassword) {
+    return res.status(400).json(new ApiError(400, "All fields are required!"));
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res
+      .status(400)
+      .json(new ApiError(400, "Both password should be same."));
+  }
+
+  const user = await db.forgotPasswordToken.findFirst({
+    where: {
+      token: forgotPasswordToken,
+    },
+  });
+
+  if (!user || user.expires < new Date()) {
+    return res.status(401).json(new ApiError(401, "Invalid or expired token."));
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await db.user.update({
+    where: {
+      id: user.userId,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  await db.forgotPasswordToken.delete({
+    where: {
+      token: forgotPasswordToken,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Password changed successfully."));
 });
