@@ -7,6 +7,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import AuthLayout from "./layout/AuthLayout";
 import ForgotPassword from "./page/ForgotPassword";
+import ChangePassword from "./page/ChangePassword";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -47,6 +48,10 @@ const App = () => {
           <Route
             path="/forgot-password"
             element={!authUser ? <ForgotPassword /> : <Navigate to={"/home"} />}
+          />
+          <Route
+            path="/change-password"
+            element={!authUser ? <ChangePassword /> : <Navigate to={"/home"} />}
           />
         </Route>
         <Route

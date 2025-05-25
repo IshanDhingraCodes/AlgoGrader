@@ -29,5 +29,29 @@ const SignInSchema = z.object({
 const ForgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email"),
 });
+const ChangePasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters.")
+      .regex(/[A-Z]/, "Password must include at least one uppercase letter.")
+      .regex(/[0-9]/, "Password must include at least one number.")
+      .regex(/[a-z]/, "Password must include at least one lowercase letter."),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters.")
+      .regex(/[A-Z]/, "Password must include at least one uppercase letter.")
+      .regex(/[0-9]/, "Password must include at least one number.")
+      .regex(/[a-z]/, "Password must include at least one lowercase letter."),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
 
-export { SignUpSchema, SignInSchema, ForgotPasswordSchema };
+export {
+  SignUpSchema,
+  SignInSchema,
+  ForgotPasswordSchema,
+  ChangePasswordSchema,
+};

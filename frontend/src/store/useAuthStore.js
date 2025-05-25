@@ -84,4 +84,27 @@ export const useAuthStore = create((set) => ({
       set({ isSendingReset: false });
     }
   },
+
+  changePassword: async (data) => {
+    set({ isSendingReset: true });
+    try {
+      const res = await axiosInstance.post(
+        `/auth/change-password/${data.token}`,
+        {
+          newPassword: data.newPassword,
+          confirmPassword: data.confirmPassword,
+        }
+      );
+
+      toast.success(res.data.message || "Password changed successfully");
+
+      setTimeout(() => {
+        window.location.href = "/sign-in";
+      }, 1500);
+    } catch (error) {
+      error.response?.data?.message || "ChangePassword frontend failed";
+    } finally {
+      set({ isSendingReset: false });
+    }
+  },
 }));

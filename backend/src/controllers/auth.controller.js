@@ -169,7 +169,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     create: { email, token, expires, userId: user.id },
   });
 
-  const verificationUrl = `http://localhost:8080/api/v1/auth/change-password/${token}`;
+  const verificationUrl = `http://localhost:5173/change-password?token=${token}`;
 
   const mailGenContent = forgotPasswordMailGenContent(
     user.name,
