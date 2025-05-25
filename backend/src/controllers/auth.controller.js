@@ -36,6 +36,10 @@ export const register = asyncHandler(async (req, res) => {
     },
   });
 
+  if (!newUser) {
+    return res.status(503).json(new ApiError(503, "User not created"));
+  }
+
   const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
@@ -66,6 +70,12 @@ export const register = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json(new ApiError(400, "Please provide email & password!"));
+  }
 
   const user = await db.user.findUnique({
     where: {
