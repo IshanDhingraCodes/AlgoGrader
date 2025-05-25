@@ -7,6 +7,7 @@ export const useAuthStore = create((set) => ({
   isSigninUp: false,
   isLoggingIn: false,
   isCheckingAuth: false,
+  isSendingReset: false,
 
   checkAuth: async () => {
     set({ isCheckingAuth: true });
@@ -64,6 +65,23 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       console.log("Error logging out", error);
       toast.error("Error logging out");
+    }
+  },
+
+  forgotPassword: async (data) => {
+    set({ isSendingReset: true });
+    try {
+      const res = await axiosInstance.post("/auth/forgotPassword", data);
+      toast.success(res.data.message || "Please verify your email.");
+
+      setTimeout(() => {
+        window.location.href = "/sign-in";
+      }, 3000);
+    } catch (error) {
+      console.log("Error finding user:", error);
+      toast.error("forgotPassword failed");
+    } finally {
+      set({ isSendingReset: false });
     }
   },
 }));

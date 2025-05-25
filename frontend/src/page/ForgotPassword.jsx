@@ -1,28 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { SignInSchema } from "../schema/auth.validations";
+import { Mail, Loader2 } from "lucide-react";
+import { ForgotPasswordSchema } from "../schema/auth.validations";
 import { logo } from "../assets";
 import { useAuthStore } from "../store/useAuthStore";
 
-const SignInPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const { isLoggingIn, login } = useAuthStore();
+const ForgotPassword = () => {
+  const { forgotPassword, isSendingReset } = useAuthStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(SignInSchema) });
+  } = useForm({ resolver: zodResolver(ForgotPasswordSchema) });
 
   const onSubmit = async (data) => {
     try {
-      await login(data);
+      await forgotPassword(data);
     } catch (error) {
-      console.error("SignIn failed:", error);
+      console.error("forgotPassword error :", error);
     }
   };
 
@@ -35,7 +33,7 @@ const SignInPage = () => {
             <h1 className="text-[30px] leading-[32px] font-bold">AlgoGrader</h1>
           </Link>
           <div className="space-y-4">
-            <h1 className="text-5xl font-bold mt-2">Sign In</h1>
+            <h1 className="text-5xl font-bold mt-2">Forgot Password</h1>
             <p className="text-lg text-base-content/60">
               Please enter your details.
             </p>
@@ -68,69 +66,28 @@ const SignInPage = () => {
             )}
           </div>
 
-          {/* Password */}
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium">Password</span>
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-base-content/40 z-10" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-                className={`input input-bordered w-full pl-10 ${
-                  errors.password ? "input-error" : ""
-                }`}
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-base-content/40 z-10" />
-                ) : (
-                  <Eye className="h-5 w-5 text-base-content/40 z-10" />
-                )}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-            <Link
-              to="/forgot-password"
-              className="link link-hover link-secondary font-semibold"
-            >
-              Forgot Password ?
-            </Link>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
             className="btn btn-primary w-full rounded-xl"
-            disabled={isLoggingIn}
+            disabled={isSendingReset}
           >
-            {isLoggingIn ? (
+            {isSendingReset ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                Sending...
               </>
             ) : (
-              "Sign In"
+              "Reset Password"
             )}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-base-content/60">
-            Don't have an account?{" "}
-            <Link to="/sign-up" className="link link-success">
-              Sign Up
+            Return to{" "}
+            <Link to="/sign-in" className="link link-success">
+              Sign In
             </Link>
           </p>
         </div>
@@ -139,4 +96,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default ForgotPassword;

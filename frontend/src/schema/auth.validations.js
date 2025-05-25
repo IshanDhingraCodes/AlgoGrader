@@ -26,4 +26,8 @@ const SignInSchema = z.object({
   password: z.string().min(6, "Invalid Credentials"),
 });
 
-export { SignUpSchema, SignInSchema };
+const ForgotPasswordSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+});
+
+export { SignUpSchema, SignInSchema, ForgotPasswordSchema };
