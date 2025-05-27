@@ -8,6 +8,7 @@ import { Loader } from "lucide-react";
 import AuthLayout from "./layout/AuthLayout";
 import ForgotPassword from "./page/ForgotPassword";
 import ChangePassword from "./page/ChangePassword";
+import DashboardLayout from "./layout/DashboardLayout";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -36,6 +37,8 @@ const App = () => {
           path="/"
           element={!authUser ? <Landing /> : <Navigate to={"/home"} />}
         />
+
+        {/* Auth Layout */}
         <Route path="/" element={<AuthLayout />}>
           <Route
             path="/sign-in"
@@ -54,10 +57,14 @@ const App = () => {
             element={!authUser ? <ChangePassword /> : <Navigate to={"/home"} />}
           />
         </Route>
-        <Route
-          path="/home"
-          element={authUser ? <HomePage /> : <Navigate to={"/"} />}
-        />
+
+        {/* Dashboard Layout */}
+        <Route path="/" element={<DashboardLayout />}>
+          <Route
+            path="/home"
+            element={authUser ? <HomePage /> : <Navigate to={"/"} />}
+          />
+        </Route>
       </Routes>
     </>
   );
