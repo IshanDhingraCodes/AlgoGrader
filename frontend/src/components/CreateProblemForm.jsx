@@ -12,10 +12,9 @@ import {
   Download,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
-import { axiosInstance } from "../lib/axios";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { problemSchema } from "../schema/problem.validation";
+import { useProblemStore } from "../store/useProblemStore";
 
 const sampledpData = {
   title: "Climbing Stairs",
@@ -517,23 +516,19 @@ const CreateProblemForm = () => {
     name: "tags",
   });
 
+  const { createProblem } = useProblemStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (value) => {
-   try {
-    setIsLoading(true)
-    const res = await axiosInstance.post("/problems/create-problem" , value)
-    console.log(res.data);
-    toast.success(res.data.message || "Problem Created successfully⚡");
-    navigation("/home");
-
-   } catch (error) {
-    console.log(error);
-    toast.error("Error creating problem")
-   }
-   finally{
+    try {
+      setIsLoading(true);
+      await createProblem(value);
+      navigation("/home");
+    } catch (error) {
+      console.error("Error creating problem:", error);
+    } finally {
       setIsLoading(false);
-   }
+    }
   };
 
   const loadSampleData = () => {
