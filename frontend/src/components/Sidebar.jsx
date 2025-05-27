@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { logo } from "../assets";
 import { sidebarLinks } from "../constants";
 import SidebarFooter from "./SidebarFooter";
@@ -8,7 +8,14 @@ import { Code } from "lucide-react";
 
 const Sidebar = () => {
   const { authUser } = useAuthStore();
+  const { pathname } = useLocation();
 
+  const getLinkClasses = (route) =>
+    `flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start transition-colors duration-200 ${
+      pathname === route
+        ? "bg-primary text-white font-bold"
+        : "text-base-content hover:bg-base-300"
+    }`;
   return (
     <section className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between border-r border-base-300 bg-base-200 pt-8 text-base max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
       <nav className="flex flex-col gap-4">
@@ -29,11 +36,7 @@ const Sidebar = () => {
         </Link>
 
         {sidebarLinks.map((item, i) => (
-          <Link
-            key={i}
-            to={item.route}
-            className="flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start"
-          >
+          <Link key={i} to={item.route} className={getLinkClasses(item.route)}>
             <item.icon />
             <p className="text-16 font-semibold text-base max-xl:hidden">
               {item.label}
@@ -42,10 +45,7 @@ const Sidebar = () => {
         ))}
 
         {authUser?.role === "ADMIN" && (
-          <Link
-            to="/add-problem"
-            className="flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start"
-          >
+          <Link to="/add-problem" className={getLinkClasses("/add-problem")}>
             <Code />
             <p className="text-16 font-semibold text-base max-xl:hidden">
               Add Problem

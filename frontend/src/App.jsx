@@ -9,6 +9,8 @@ import AuthLayout from "./layout/AuthLayout";
 import ForgotPassword from "./page/ForgotPassword";
 import ChangePassword from "./page/ChangePassword";
 import DashboardLayout from "./layout/DashboardLayout";
+import AdminRoute from "./layout/AdminRoute";
+import AddProblem from "./page/AddProblem";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -64,6 +66,13 @@ const App = () => {
             path="/home"
             element={authUser ? <HomePage /> : <Navigate to={"/"} />}
           />
+
+          <Route element={<AdminRoute />}>
+            <Route
+              path="/add-problem"
+              element={authUser ? <AddProblem /> : <Navigate to="/" />}
+            />
+          </Route>
         </Route>
       </Routes>
     </>
