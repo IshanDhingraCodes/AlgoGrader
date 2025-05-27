@@ -20,6 +20,8 @@ export const createProblem = asyncHandler(async (req, res) => {
     testcases,
     codeSnippets,
     referenceSolutions,
+    hints,
+    editorial,
   } = req.body;
 
   // double check if user role is admin
@@ -85,6 +87,8 @@ export const createProblem = asyncHandler(async (req, res) => {
       testcases,
       codeSnippets,
       referenceSolutions,
+      hints,
+      editorial,
       userId: req.user.id,
     },
   });
@@ -143,6 +147,8 @@ export const updateProblem = asyncHandler(async (req, res) => {
     testcases,
     codeSnippets,
     referenceSolutions,
+    hints,
+    editorial,
   } = req.body;
 
   if (req.user.role !== "ADMIN") {
@@ -218,6 +224,8 @@ export const updateProblem = asyncHandler(async (req, res) => {
       testcases,
       codeSnippets,
       referenceSolutions,
+      hints,
+      editorial,
     },
   });
 

@@ -520,7 +520,20 @@ const CreateProblemForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (value) => {
-    console.log(value);
+   try {
+    setIsLoading(true)
+    const res = await axiosInstance.post("/problems/create-problem" , value)
+    console.log(res.data);
+    toast.success(res.data.message || "Problem Created successfully⚡");
+    navigation("/home");
+
+   } catch (error) {
+    console.log(error);
+    toast.error("Error creating problem")
+   }
+   finally{
+      setIsLoading(false);
+   }
   };
 
   const loadSampleData = () => {
@@ -548,7 +561,7 @@ const CreateProblemForm = () => {
                 <button
                   type="button"
                   className={`btn join-item ${
-                    sampleType === "DP" ? "btn-active" : ""
+                    sampleType === "DP" ? "btn-active dark:btn-accent" : ""
                   }`}
                   onClick={() => setSampleType("DP")}
                 >
@@ -557,7 +570,7 @@ const CreateProblemForm = () => {
                 <button
                   type="button"
                   className={`btn join-item ${
-                    sampleType === "string" ? "btn-active" : ""
+                    sampleType === "string" ? "btn-active dark:btn-accent" : ""
                   }`}
                   onClick={() => setSampleType("string")}
                 >
