@@ -47,7 +47,7 @@ export const useProblemStore = create((set) => ({
       // console.log(res.data.data);
       set({ problem: res.data.data });
 
-      toast.success(res.data.message);
+      // toast.success(res.data.message);
     } catch (error) {
       console.log("Error getting problem", error);
       toast.error("Error in getting problem.");
