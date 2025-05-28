@@ -139,7 +139,7 @@ const ProblemTable = ({ problems }) => {
                         type="checkbox"
                         checked={isSolved}
                         readOnly
-                        className="checkbox checkbox-sm"
+                        className="checkbox checkbox-sm rounded-sm"
                       />
                     </td>
                     <td>
@@ -155,7 +155,7 @@ const ProblemTable = ({ problems }) => {
                         {(problem.tags || []).slice(0, 2).map((tag, idx) => (
                           <span
                             key={idx[0]}
-                            className="badge badge-outline badge-warning text-xs font-bold p-4"
+                            className="badge badge-outline badge-warning text-xs font-bold p-4 rounded-sm"
                           >
                             {tag}
                           </span>
@@ -164,7 +164,7 @@ const ProblemTable = ({ problems }) => {
                     </td>
                     <td>
                       <span
-                        className={`badge font-semibold text-xs text-white ${
+                        className={`badge font-semibold text-xs text-white rounded-sm ${
                           problem.difficulty === "EASY"
                             ? "badge-success"
                             : problem.difficulty === "MEDIUM"
@@ -181,7 +181,7 @@ const ProblemTable = ({ problems }) => {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleDelete(problem.id)}
-                              className="btn btn-sm btn-error"
+                              className="btn btn-sm btn-error rounded-sm"
                             >
                               {isDeletingProblem ? (
                                 <Loader2 className="animate-spin h-4 w-4" />
@@ -189,13 +189,16 @@ const ProblemTable = ({ problems }) => {
                                 <TrashIcon className="w-4 h-4 text-white" />
                               )}
                             </button>
-                            <button disabled className="btn btn-sm btn-warning">
+                            <button
+                              disabled
+                              className="btn btn-sm btn-warning rounded-sm"
+                            >
                               <PencilIcon className="w-4 h-4 text-white" />
                             </button>
                           </div>
                         )}
                         <button
-                          className="btn btn-sm btn-outline flex gap-2 items-center"
+                          className="btn btn-sm btn-outline flex gap-2 items-center rounded-sm"
                           onClick={() => handleAddToPlaylist(problem.id)}
                         >
                           <Bookmark className="w-4 h-4" />
@@ -222,7 +225,7 @@ const ProblemTable = ({ problems }) => {
       {/* pagination */}
       <div className="flex justify-center items-center mt-6 gap-2">
         <button
-          className="btn btn-sm"
+          className="btn btn-sm rounded-sm"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((prev) => prev - 1)}
         >
@@ -232,7 +235,7 @@ const ProblemTable = ({ problems }) => {
           {currentPage} / {totalPages}
         </span>
         <button
-          className="btn btn-sm"
+          className="btn btn-sm rounded-sm"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((prev) => prev + 1)}
         >
