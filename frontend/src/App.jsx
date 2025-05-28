@@ -11,6 +11,7 @@ import ChangePassword from "./page/ChangePassword";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminRoute from "./layout/AdminRoute";
 import AddProblem from "./page/AddProblem";
+import ProblemPage from "./page/ProblemPage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -74,6 +75,10 @@ const App = () => {
             />
           </Route>
         </Route>
+        <Route
+          path="/problem/:id"
+          element={authUser ? <ProblemPage /> : <Navigate to={"/"} />}
+        />
       </Routes>
     </>
   );
