@@ -30,25 +30,18 @@ const DoughnutChart = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-        position: "bottom",
-        labels: {
-          color: "#d4d4d8",
-        },
-      },
+      legend: { display: false },
     },
   };
 
   return (
-    <div className="w-64 md:w-80">
+    <div className="w-full aspect-square max-w-[200px] md:max-w-[240px] mx-auto">
       {solvedProblems.length === 0 ? (
         <p className="text-center text-gray-400">No data yet</p>
       ) : (
-        <div className="w-40 md:w-56 mx-auto">
-          <Doughnut data={data} options={options} />
-        </div>
+        <Doughnut data={data} options={options} />
       )}
     </div>
   );

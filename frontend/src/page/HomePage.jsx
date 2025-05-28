@@ -35,17 +35,16 @@ const HomePage = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
-      <h1 className="text-4xl font-bold z-10 text-start">
+      <h1 className="text-4xl font-bold text-start">
         Welcome <span className="text-primary">{authUser.name}</span>
       </h1>
-      <p className="text-lg font-semibold text-gray-500 dark:text-gray-400 z-10">
+      <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">
         Your space to practice coding questions and build confidence for
         interviews.
       </p>
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Doughnut Chart Stat Card */}
         <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition flex flex-col items-center justify-center">
           <h3 className="text-sm font-semibold mb-4">Problems Solved</h3>
           <DoughnutChart />
