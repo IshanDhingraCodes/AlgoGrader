@@ -333,22 +333,22 @@ const sampleStringProblem = {
     rl.close();
   });`,
     PYTHON: `class Solution:
-      def isPalindrome(self, s: str) -> bool:
-          # Write your code here
-          pass
-  
-  # Input parsing
-  if __name__ == "__main__":
-      import sys
-      # Read the input string
-      s = sys.stdin.readline().strip()
-      
-      # Call solution
-      sol = Solution()
-      result = sol.isPalindrome(s)
-      
-      # Output result
-      print(str(result).lower())  # Convert True/False to lowercase true/false`,
+    def isPalindrome(self, s: str) -> bool:
+        # Write your code here
+        pass
+
+# Input parsing
+if __name__ == "__main__":
+    import sys
+    # Read the input string
+    s = sys.stdin.readline().strip()
+
+    # Call solution
+    sol = Solution()
+    result = sol.isPalindrome(s)
+
+    # Output result
+    print(str(result).lower())  # Convert True/False to lowercase true/false`,
     JAVA: `import java.util.Scanner;
 
 public class Main {
@@ -412,25 +412,25 @@ public class Main {
     rl.close();
   });`,
     PYTHON: `class Solution:
-      def isPalindrome(self, s: str) -> bool:
-          # Convert to lowercase and keep only alphanumeric characters
-          filtered_chars = [c.lower() for c in s if c.isalnum()]
-          
-          # Check if it's a palindrome
-          return filtered_chars == filtered_chars[::-1]
-  
-  # Input parsing
-  if __name__ == "__main__":
-      import sys
-      # Read the input string
-      s = sys.stdin.readline().strip()
-      
-      # Call solution
-      sol = Solution()
-      result = sol.isPalindrome(s)
-      
-      # Output result
-      print(str(result).lower())  # Convert True/False to lowercase true/false`,
+    def isPalindrome(self, s: str) -> bool:
+        # Convert to lowercase and keep only alphanumeric characters
+        filtered_chars = [c.lower() for c in s if c.isalnum()]
+        
+        # Check if it's a palindrome
+        return filtered_chars == filtered_chars[::-1]
+
+# Input parsing
+if __name__ == "__main__":
+    import sys
+    # Read the input string
+    s = sys.stdin.readline().strip()
+
+    # Call solution
+    sol = Solution()
+    result = sol.isPalindrome(s)
+
+    # Output result
+    print(str(result).lower())  # Convert True/False to lowercase true/false`,
     JAVA: `import java.util.Scanner;
 
 public class Main {
@@ -543,7 +543,7 @@ const CreateProblemForm = () => {
 
   return (
     <div className="container mx-auto max-w-7xl">
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card">
         <div className="card-body p-6 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">
             <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
