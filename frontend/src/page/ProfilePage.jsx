@@ -28,7 +28,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 text-center md:text-left">
+        <div className="flex flex-col gap-2 items-center md:items-start">
           <h2 className="text-2xl font-bold">{authUser.name}</h2>
           <p className="text-gray-500">{authUser.email}</p>
           <span className="badge badge-primary text-sm">{authUser.role}</span>
