@@ -1,4 +1,4 @@
-import { House, Vote, MessageSquareDot } from "lucide-react";
+import { House, Vote, MessageSquareDot, ListVideo } from "lucide-react";
 
 const sidebarLinks = [
   {
@@ -15,6 +15,11 @@ const sidebarLinks = [
     icon: MessageSquareDot,
     route: "/submissions",
     label: "My Submissions",
+  },
+  {
+    icon: ListVideo,
+    route: "/playlists",
+    label: "Playlists",
   },
 ];
 
