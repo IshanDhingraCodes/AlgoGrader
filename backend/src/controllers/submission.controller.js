@@ -49,6 +49,7 @@ export const getAllSubmissionsForProblem = asyncHandler(async (req, res) => {
   const submission = await db.submission.count({
     where: {
       problemId: problemId,
+      userId: req.user.id,
     },
   });
 
