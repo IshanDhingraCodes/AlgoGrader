@@ -19,25 +19,32 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
+import { useSubmissionStore } from "../store/useSubmissionStore";
 import { getLanguageId } from "../lib/lang";
 import SubmissionResults from "../components/Submission";
+import SubmissionsList from "../components/SubmissionList";
 
 const ProblemPage = () => {
   const { id } = useParams();
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
+  const { isExecuting, submission, executeCode } = useExecutionStore();
+  const {
+    submission: submissions,
+    isLoading: isSubmissionsLoading,
+    getSubmissionForProblem,
+    getSubmissionCountForProblem,
+    submissionCount,
+  } = useSubmissionStore();
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
-  const { isExecuting, submission, executeCode } = useExecutionStore();
-
-  const submissionCount = 10;
-
   useEffect(() => {
     getProblemById(id);
-  }, [getProblemById, id]);
+    getSubmissionCountForProblem(id);
+  }, [getProblemById, getSubmissionCountForProblem, id]);
 
   useEffect(() => {
     if (problem) {
@@ -53,6 +60,12 @@ const ProblemPage = () => {
       );
     }
   }, [problem, selectedLanguage]);
+
+  useEffect(() => {
+    if (activeTab === "submissions" && id) {
+      getSubmissionForProblem(id);
+    }
+  }, [activeTab, getSubmissionForProblem, id]);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -132,16 +145,11 @@ const ProblemPage = () => {
         );
       case "submissions":
         return (
-          <div className="p-4 text-center text-base-content/70">
-            No Submission
-          </div>
+          <SubmissionsList
+            submissions={submissions}
+            isLoading={isSubmissionsLoading}
+          />
         );
-      // return (
-      //   <SubmissionsList
-      //     submissions={submissions}
-      //     isLoading={isSubmissionsLoading}
-      //   />
-      // );
       case "discussion":
         return (
           <div className="p-4 text-center text-base-content/70">
@@ -199,7 +207,7 @@ const ProblemPage = () => {
               </span>
               <span className="text-base-content/30">•</span>
               <Users className="w-4 h-4" />
-              <span>{submissionCount} Submissions</span>
+              <span>{submissionCount || 0} Submissions</span>
               <span className="text-base-content/30">•</span>
               <ThumbsUp className="w-4 h-4" />
               <span>95% Success Rate</span>
@@ -327,37 +335,37 @@ const ProblemPage = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="card bg-base-100 shadow-xl mt-6">
-        <div className="card-body">
-          {submission ? (
-            <SubmissionResults submission={submission} />
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold">Test Cases</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                  <thead>
-                    <tr>
-                      <th>Input</th>
-                      <th>Expected Output</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {testcases.map((testCase, index) => (
-                      <tr key={index}>
-                        <td className="font-mono">{testCase.input}</td>
-                        <td className="font-mono">{testCase.output}</td>
+        <div className="card bg-base-100 shadow-xl mt-6">
+          <div className="card-body">
+            {submission ? (
+              <SubmissionResults submission={submission} />
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold">Test Cases</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="table table-zebra w-full">
+                    <thead>
+                      <tr>
+                        <th>Input</th>
+                        <th>Expected Output</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
+                    </thead>
+                    <tbody>
+                      {testcases.map((testCase, index) => (
+                        <tr key={index}>
+                          <td className="font-mono">{testCase.input}</td>
+                          <td className="font-mono">{testCase.output}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
