@@ -14,6 +14,13 @@ export const createPlaylist = asyncHandler(async (req, res) => {
       description,
       userId,
     },
+    include: {
+      problems: {
+        include: {
+          problem: true,
+        },
+      },
+    },
   });
 
   return res

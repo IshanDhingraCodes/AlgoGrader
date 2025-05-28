@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 import { Link } from "react-router-dom";
+import CreatePlaylistModal from "../components/CreatePlaylistModal";
 import {
   BookOpen,
   ChevronDown,
@@ -12,8 +13,10 @@ import {
 } from "lucide-react";
 
 const UserPlaylist = () => {
-  const { getAllPlaylists, playlists, deletePlaylist } = usePlaylistStore();
+  const { getAllPlaylists, playlists, deletePlaylist, createPlaylist } =
+    usePlaylistStore();
   const [expandedPlaylist, setExpandedPlaylist] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     getAllPlaylists();
@@ -53,12 +56,21 @@ const UserPlaylist = () => {
     }).format(date);
   };
 
+  const handleCreatePlaylist = async (data) => {
+    await createPlaylist(data);
+  };
+
   return (
     <div className="p-4 bg-base-200 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-primary">My Playlists</h2>
-          <button className="btn btn-primary btn-sm">Create Playlist</button>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Create Playlist
+          </button>
         </div>
 
         {playlists.length === 0 ? (
@@ -69,7 +81,12 @@ const UserPlaylist = () => {
                 Create your first playlist to organize problems!
               </p>
               <div className="card-actions justify-center mt-4">
-                <button className="btn btn-primary">Create Playlist</button>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setIsCreateModalOpen(true)}
+                >
+                  Create Playlist
+                </button>
               </div>
             </div>
           </div>
@@ -94,7 +111,7 @@ const UserPlaylist = () => {
                         <div className="flex items-center gap-2 mt-1 text-sm text-base-content/70">
                           <div className="flex items-center gap-1">
                             <List size={14} />
-                            <span>{playlist.problems.length} problems</span>
+                            <span>{playlist.length} problems</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock size={14} />
@@ -126,7 +143,7 @@ const UserPlaylist = () => {
                         Problems in this playlist
                       </h4>
 
-                      {playlist.problems.length === 0 ? (
+                      {playlist.length === 0 ? (
                         <div className="alert">
                           <span>No problems added to this playlist yet.</span>
                         </div>
@@ -198,6 +215,11 @@ const UserPlaylist = () => {
           </div>
         )}
       </div>
+      <CreatePlaylistModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreatePlaylist}
+      />
     </div>
   );
 };

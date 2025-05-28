@@ -67,7 +67,6 @@ const ProblemTable = ({ problems }) => {
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-10">
-      {/* Header with Create Playlist Button */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
         <button
@@ -154,7 +153,7 @@ const ProblemTable = ({ problems }) => {
                       <div className="flex flex-wrap gap-1">
                         {(problem.tags || []).slice(0, 2).map((tag, idx) => (
                           <span
-                            key={idx[0]}
+                            key={idx}
                             className="badge badge-outline badge-warning text-xs font-bold p-4 rounded-sm"
                           >
                             {tag}
