@@ -138,7 +138,7 @@ const ProblemTable = ({ problems }) => {
                         type="checkbox"
                         checked={isSolved}
                         readOnly
-                        className="checkbox checkbox-sm rounded-sm"
+                        className="checkbox checkbox-sm rounded-sm cursor-default"
                       />
                     </td>
                     <td>

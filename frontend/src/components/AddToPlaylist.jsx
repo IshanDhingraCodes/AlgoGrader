@@ -24,27 +24,50 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center p-4 border-b border-base-300">
-          <h3 className="text-xl font-bold">Add to Playlist</h3>
-          <button onClick={onClose} className="btn btn-ghost btn-sm btn-circle">
-            <X className="w-5 h-5" />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="add-playlist-title"
+    >
+      <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-base-100 shadow-2xl ring-1 ring-black ring-opacity-5 animate-fade-in">
+        {/* Header */}
+        <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-base-300">
+          <h2
+            id="add-playlist-title"
+            className="text-lg font-semibold text-gray-900 dark:text-white"
+          >
+            Add to Playlist
+          </h2>
+          <button
+            onClick={onClose}
+            className="btn btn-ghost btn-sm btn-circle"
+            aria-label="Close add to playlist modal"
+          >
+            <X className="h-5 w-5" />
           </button>
-        </div>
+        </header>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Select Playlist</span>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6 px-6 py-6">
+          <div>
+            <label
+              htmlFor="playlist-select"
+              className="block text-sm font-medium text-gray-700 dark:text-white mb-2"
+            >
+              Select Playlist
             </label>
             <select
-              className="select select-bordered w-full"
+              id="playlist-select"
+              className="select select-bordered w-full cursor-pointer"
               value={selectedPlaylist}
               onChange={(e) => setSelectedPlaylist(e.target.value)}
               disabled={isLoading}
+              required
             >
-              <option value="">Select a playlist</option>
+              <option value="" disabled>
+                Select a playlist
+              </option>
               {playlists.map((playlist) => (
                 <option key={playlist.id} value={playlist.id}>
                   {playlist.name}
@@ -53,19 +76,24 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
             </select>
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
-            <button type="button" onClick={onClose} className="btn btn-ghost">
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn btn-outline btn-sm"
+              disabled={isLoading}
+            >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm flex items-center gap-2"
               disabled={!selectedPlaylist || isLoading}
             >
               {isLoading ? (
-                <Loader className="w-4 h-4 animate-spin" />
+                <Loader className="h-4 w-4 animate-spin" />
               ) : (
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
               )}
               Add to Playlist
             </button>
