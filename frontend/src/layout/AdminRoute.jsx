@@ -15,7 +15,7 @@ const AdminRoute = () => {
   }
 
   if (!authUser || authUser.role !== "ADMIN") {
-    return <Navigate to="/home" />;
+    return <Navigate to="/home" replace />;
   }
 
   return <Outlet />;

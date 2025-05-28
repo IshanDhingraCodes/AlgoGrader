@@ -12,6 +12,8 @@ import DashboardLayout from "./layout/DashboardLayout";
 import AdminRoute from "./layout/AdminRoute";
 import AddProblem from "./page/AddProblem";
 import ProblemPage from "./page/ProblemPage";
+import AllSubmission from "./page/AllSubmission";
+import ProblemSolvedByUser from "./page/ProblemSolvedByUser";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -66,6 +68,14 @@ const App = () => {
           <Route
             path="/home"
             element={authUser ? <HomePage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/submissions"
+            element={authUser ? <AllSubmission /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/solved-problems"
+            element={authUser ? <ProblemSolvedByUser /> : <Navigate to={"/"} />}
           />
 
           <Route element={<AdminRoute />}>
