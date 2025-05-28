@@ -6,10 +6,10 @@ import {
   Clock,
   HardDrive,
   Check,
-  X,
   ChevronDown,
   ChevronUp,
   Filter,
+  X,
 } from "lucide-react";
 
 const AllSubmission = () => {
@@ -46,11 +46,7 @@ const AllSubmission = () => {
   };
 
   const toggleExpand = (id) => {
-    if (expandedSubmission === id) {
-      setExpandedSubmission(null);
-    } else {
-      setExpandedSubmission(id);
-    }
+    setExpandedSubmission(expandedSubmission === id ? null : id);
   };
 
   const filteredSubmissions = submissions.filter((submission) => {
@@ -59,21 +55,28 @@ const AllSubmission = () => {
   });
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">
+    <div className="flex flex-col flex-1 w-full px-5 sm:px-8 py-7 lg:py-12 gap-8 max-h-screen md:overflow-y-scroll">
+      <header className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <h1 className="text-4xl font-bold text-primary text-start w-full md:w-auto">
           My Submissions
         </h1>
 
-        <div className="flex flex-col items-center justify-center sm:flex-row gap-3 w-full md:w-auto">
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-outline gap-2">
-              <Filter size={16} />
-              {filter === "all" ? "All Submissions" : filter}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+          {/* Filter Dropdown */}
+          <div className="dropdown dropdown-end w-full sm:w-auto">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-outline w-full sm:w-auto flex items-center gap-2 justify-center"
+            >
+              <Filter size={18} />
+              <span className="capitalize">
+                {filter === "all" ? "All Submissions" : filter}
+              </span>
             </div>
             <ul
               tabIndex={0}
-              className="dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full sm:w-52"
             >
               <li>
                 <button onClick={() => setFilter("all")}>
@@ -96,158 +99,164 @@ const AllSubmission = () => {
             </ul>
           </div>
 
-          <div className="stats shadow bg-base-200">
-            <div className="stat p-2 w-[70px] flex flex-col items-center justify-center">
-              <div className="stat-title">Total</div>
-              <div className="stat-value text-lg">{submissions.length}</div>
+          {/* Stats */}
+          <div className="stats shadow bg-base-300 rounded-lg w-full sm:w-auto justify-center">
+            <div className="stat p-3 w-[90px] flex flex-col items-center justify-center">
+              <div className="stat-title text-xs">Total</div>
+              <div className="stat-value text-xl">{submissions.length}</div>
             </div>
-            <div className="stat p-2 w-[70px] flex flex-col items-center justify-center">
-              <div className="stat-title">Accepted</div>
-              <div className="stat-value text-lg text-success">
+            <div className="stat p-3 w-[90px] flex flex-col items-center justify-center">
+              <div className="stat-title text-xs">Accepted</div>
+              <div className="stat-value text-xl text-success">
                 {submissions.filter((s) => s.status === "Accepted").length}
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </header>
+
       {filteredSubmissions.length === 0 ? (
-        <div className="card">
-          <div className="card-body items-center text-center">
-            <h2 className="card-title">No submissions found</h2>
-            <p>
-              You haven't submitted any solutions yet, or none match your
-              current filter.
-            </p>
-          </div>
+        <div className="bg-base-300 rounded-lg shadow p-8 flex flex-col items-center text-center text-gray-500">
+          <X size={48} className="mb-3 text-error" />
+          <h2 className="text-2xl font-semibold mb-2">No submissions found</h2>
+          <p className="max-w-md">
+            You haven't submitted any solutions yet, or none match your current
+            filter.
+          </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {filteredSubmissions.map((submission) => (
             <div
               key={submission.id}
-              className="card bg-base-200 shadow-md overflow-hidden transition-all duration-300"
+              className="bg-base-300 rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg"
             >
-              <div
-                className="card-body p-0"
-                role="button"
+              <button
                 onClick={() => toggleExpand(submission.id)}
+                className="w-full text-left p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer"
+                aria-expanded={expandedSubmission === submission.id}
               >
-                {/* Submission Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 cursor-pointer hover:bg-base-200">
-                  <div className="flex flex-col md:flex-row md:items-center gap-3 w-full">
-                    <div
-                      className={`badge badge-lg ${getStatusClass(
-                        submission.status
-                      )}`}
-                    >
-                      {submission.status === "Accepted" ? (
-                        <Check size={14} className="mr-1" />
-                      ) : null}
-                      {submission.status}
-                    </div>
+                <div className="flex flex-wrap items-center gap-4 flex-1">
+                  <span
+                    className={`badge badge-lg rounded-md ${getStatusClass(
+                      submission.status
+                    )} whitespace-nowrap`}
+                  >
+                    {submission.status === "Accepted" && (
+                      <Check size={16} className="inline mr-1" />
+                    )}
+                    {submission.status}
+                  </span>
 
-                    <div className="flex items-center gap-2">
-                      <Code size={16} />
-                      <span className="font-medium">{submission.language}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Clock size={16} />
-                      <span>Submitted {formatDate(submission.createdAt)}</span>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
+                    <Code size={18} />
+                    <span>{submission.language}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-3 md:mt-0">
-                    {expandedSubmission === submission.id ? (
-                      <ChevronUp size={20} />
-                    ) : (
-                      <ChevronDown size={20} />
-                    )}
+                  <div className="flex items-center gap-2 text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    <Clock size={18} />
+                    <span>Submitted {formatDate(submission.createdAt)}</span>
                   </div>
                 </div>
 
-                {/* Expanded Content */}
-                {expandedSubmission === submission.id && (
-                  <div className="border-t border-base-300">
-                    {/* Code Section */}
-                    <div className="p-4">
+                <div className="text-primary">
+                  {expandedSubmission === submission.id ? (
+                    <ChevronUp size={24} />
+                  ) : (
+                    <ChevronDown size={24} />
+                  )}
+                </div>
+              </button>
+
+              {expandedSubmission === submission.id && (
+                <div className="border-t border-base-400 px-6 py-5 bg-base-200">
+                  {/* Solution Code */}
+                  <section className="mb-6">
+                    <h3 className="flex items-center gap-2 font-semibold text-lg mb-3">
+                      <Code size={20} /> Solution Code
+                    </h3>
+                    <pre className="mockup-code bg-neutral text-neutral-content p-4 overflow-x-auto rounded-lg max-h-[300px] whitespace-pre-wrap">
+                      <code>{submission.sourceCode}</code>
+                    </pre>
+                  </section>
+
+                  {/* Input and Output */}
+                  <div className="p-4 border-t border-base-300 flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 flex flex-col ">
                       <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                        <Code size={18} />
-                        Solution Code
+                        <Terminal size={18} />
+                        Input
                       </h3>
-                      <div className="mockup-code bg-neutral text-neutral-content overflow-x-auto">
-                        <pre className="p-4">
-                          <code>{submission.sourceCode}</code>
+                      <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
+                        <pre className="p-4 min-h-[100px]">
+                          <code>{submission.stdin || "No input provided"}</code>
                         </pre>
                       </div>
                     </div>
 
-                    {/* Input/Output Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border-t border-base-300">
-                      <div>
-                        <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                          <Terminal size={18} />
-                          Input
-                        </h3>
-                        <div className="mockup-code bg-neutral text-neutral-content">
-                          <pre className="p-4 min-h-[100px]">
-                            <code>
-                              {submission.stdin || "No input provided"}
-                            </code>
-                          </pre>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                          <Terminal size={18} />
-                          Output
-                        </h3>
-                        <div className="mockup-code bg-neutral text-neutral-content">
-                          <pre className="p-4 min-h-[100px]">
-                            <code>
-                              {Array.isArray(JSON.parse(submission.stdout))
-                                ? JSON.parse(submission.stdout).join("")
-                                : submission.stdout || "No output"}
-                            </code>
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Performance Stats */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border-t border-base-300">
-                      <div className="stats shadow">
-                        <div className="stat">
-                          <div className="stat-figure text-primary">
-                            <Clock size={24} />
-                          </div>
-                          <div className="stat-title">Execution Time</div>
-                          <div className="stat-value text-lg">
-                            {Array.isArray(JSON.parse(submission.time))
-                              ? JSON.parse(submission.time)[0]
-                              : submission.time || "N/A"}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="stats shadow">
-                        <div className="stat">
-                          <div className="stat-figure text-primary">
-                            <HardDrive size={24} />
-                          </div>
-                          <div className="stat-title">Memory Used</div>
-                          <div className="stat-value text-lg">
-                            {Array.isArray(JSON.parse(submission.memory))
-                              ? JSON.parse(submission.memory)[0]
-                              : submission.memory || "N/A"}
-                          </div>
-                        </div>
+                    <div className="flex-1 flex flex-col">
+                      <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                        <Terminal size={18} />
+                        Output
+                      </h3>
+                      <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
+                        <pre className="p-4 min-h-[100px]">
+                          <code>
+                            {Array.isArray(JSON.parse(submission.stdout))
+                              ? JSON.parse(submission.stdout).join("")
+                              : submission.stdout || "No output"}
+                          </code>
+                        </pre>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Performance Stats */}
+                  <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="stats shadow rounded-lg bg-base-100">
+                      <div className="stat p-4">
+                        <div className="stat-figure text-primary">
+                          <Clock size={28} />
+                        </div>
+                        <div className="stat-title">Execution Time</div>
+                        <div className="stat-value text-lg">
+                          {(() => {
+                            try {
+                              const time = JSON.parse(submission.time);
+                              return Array.isArray(time)
+                                ? time[0]
+                                : submission.time || "N/A";
+                            } catch {
+                              return submission.time || "N/A";
+                            }
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="stats shadow rounded-lg bg-base-100">
+                      <div className="stat p-4">
+                        <div className="stat-figure text-primary">
+                          <HardDrive size={28} />
+                        </div>
+                        <div className="stat-title">Memory Used</div>
+                        <div className="stat-value text-lg">
+                          {(() => {
+                            try {
+                              const mem = JSON.parse(submission.memory);
+                              return Array.isArray(mem)
+                                ? mem[0]
+                                : submission.memory || "N/A";
+                            } catch {
+                              return submission.memory || "N/A";
+                            }
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              )}
             </div>
           ))}
         </div>
