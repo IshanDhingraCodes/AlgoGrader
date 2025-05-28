@@ -11,7 +11,7 @@ import {
 
 const playlistRoutes = express.Router();
 
-playlistRoutes.post("create-playlist", authMiddleware, createPlaylist);
+playlistRoutes.post("/create-playlist", authMiddleware, createPlaylist);
 playlistRoutes.get("/", authMiddleware, getAllListDetails);
 playlistRoutes.get("/:playlistId", authMiddleware, getPlayListDetails);
 playlistRoutes.post(

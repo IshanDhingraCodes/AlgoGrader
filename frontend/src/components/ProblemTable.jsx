@@ -3,15 +3,23 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import { Bookmark, Loader2, PencilIcon, Plus, TrashIcon } from "lucide-react";
 import { useActionStore } from "../store/useActionStore";
+import { usePlaylistStore } from "../store/usePlaylistStore";
+import CreatePlaylistModal from "./CreatePlaylistModal";
+import AddToPlaylist from "./AddToPlaylist";
 
 const ProblemTable = ({ problems }) => {
   const { authUser } = useAuthStore();
   const { onDeleteProblem, isDeletingProblem } = useActionStore();
+  const { createPlaylist } = usePlaylistStore();
 
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
+    useState(false);
+  const [selectedProblemId, setSelectedProblemId] = useState(null);
 
   // Extract all unique tags from problems
   const allTags = useMemo(() => {
@@ -23,7 +31,13 @@ const ProblemTable = ({ problems }) => {
 
   const difficulties = ["EASY", "MEDIUM", "HARD"];
 
-  const handleAddToPlaylist = (id) => {};
+  const handleCreatePlaylist = async (data) => {
+    await createPlaylist(data);
+  };
+  const handleAddToPlaylist = (problemId) => {
+    setSelectedProblemId(problemId);
+    setIsAddToPlaylistModalOpen(true);
+  };
   const handleDelete = (id) => {
     onDeleteProblem(id);
   };
@@ -56,7 +70,10 @@ const ProblemTable = ({ problems }) => {
       {/* Header with Create Playlist Button */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
-        <button className="btn btn-primary gap-2 rounded-lg" onClick={() => {}}>
+        <button
+          className="btn btn-primary gap-2 rounded-lg"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
           <Plus className="w-4 h-4" />
           Create Playlist
         </button>
@@ -222,6 +239,16 @@ const ProblemTable = ({ problems }) => {
           Next
         </button>
       </div>
+      <CreatePlaylistModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreatePlaylist}
+      />
+      <AddToPlaylist
+        isOpen={isAddToPlaylistModalOpen}
+        onClose={() => setIsAddToPlaylistModalOpen(false)}
+        problemId={selectedProblemId}
+      />
     </div>
   );
 };

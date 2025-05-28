@@ -76,7 +76,7 @@ export const addProblemToPlaylist = asyncHandler(async (req, res) => {
       .json(new ApiError(400, "Invalid or missing problemId"));
   }
 
-  const problemsInPlaylist = await db.problemsInPlaylist.createMany({
+  const problemsInPlaylist = await db.problemInPlaylist.createMany({
     data: problemIds.map((problemId) => ({
       playlistId,
       problemId,
