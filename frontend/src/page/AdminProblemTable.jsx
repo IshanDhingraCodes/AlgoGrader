@@ -1,17 +1,22 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import { Loader2, PencilIcon, TrashIcon } from "lucide-react";
 import { useActionStore } from "../store/useActionStore";
+import { useProblemStore } from "../store/useProblemStore";
 
-const AdminProblemTable = ({ problems }) => {
+const AdminProblemTable = () => {
   const { authUser } = useAuthStore();
   const { onDeleteProblem, isDeletingProblem } = useActionStore();
-
+  const { problems, getAllProblems, isProblemsLoading } = useProblemStore();
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    getAllProblems();
+  }, [getAllProblems]);
 
   // Extract all unique tags from problems
   const allTags = useMemo(() => {
@@ -23,8 +28,13 @@ const AdminProblemTable = ({ problems }) => {
 
   const difficulties = ["EASY", "MEDIUM", "HARD"];
 
-  const handleDelete = (id) => {
-    onDeleteProblem(id);
+  const handleDelete = async (id) => {
+    try {
+      await onDeleteProblem(id);
+      getAllProblems();
+    } catch (error) {
+      console.error("Failed to delete problem:", error);
+    }
   };
 
   // Filter problems based on search, difficulty, and tags
@@ -49,6 +59,14 @@ const AdminProblemTable = ({ problems }) => {
       currentPage * itemsPerPage
     );
   }, [filteredProblems, currentPage]);
+
+  if (isProblemsLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="animate-spin h-8 w-8" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">

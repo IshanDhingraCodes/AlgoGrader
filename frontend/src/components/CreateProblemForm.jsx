@@ -463,6 +463,26 @@ public class Main {
   },
 };
 
+const defaultFormValues = {
+  testcases: [{ input: "", output: "" }],
+  tags: [""],
+  examples: {
+    JAVASCRIPT: { input: "", output: "", explanation: "" },
+    PYTHON: { input: "", output: "", explanation: "" },
+    JAVA: { input: "", output: "", explanation: "" },
+  },
+  codeSnippets: {
+    JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
+    PYTHON: "def solution():\n    # Write your code here\n    pass",
+    JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+  },
+  referenceSolutions: {
+    JAVASCRIPT: "// Add your reference solution here",
+    PYTHON: "# Add your reference solution here",
+    JAVA: "// Add your reference solution here",
+  },
+};
+
 const CreateProblemForm = () => {
   const [sampleType, setSampleType] = useState("DP");
   const navigation = useNavigate();
@@ -475,25 +495,7 @@ const CreateProblemForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(problemSchema),
-    defaultValues: {
-      testcases: [{ input: "", output: "" }],
-      tags: [""],
-      examples: {
-        JAVASCRIPT: { input: "", output: "", explanation: "" },
-        PYTHON: { input: "", output: "", explanation: "" },
-        JAVA: { input: "", output: "", explanation: "" },
-      },
-      codeSnippets: {
-        JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
-        PYTHON: "def solution():\n    # Write your code here\n    pass",
-        JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
-      },
-      referenceSolutions: {
-        JAVASCRIPT: "// Add your reference solution here",
-        PYTHON: "# Add your reference solution here",
-        JAVA: "// Add your reference solution here",
-      },
-    },
+    defaultValues: defaultFormValues,
   });
 
   const {
@@ -519,18 +521,6 @@ const CreateProblemForm = () => {
   const { createProblem } = useProblemStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (value) => {
-    try {
-      setIsLoading(true);
-      await createProblem(value);
-      navigation("/home");
-    } catch (error) {
-      console.error("Error creating problem:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const loadSampleData = () => {
     const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem;
 
@@ -541,6 +531,18 @@ const CreateProblemForm = () => {
     reset(sampleData);
   };
 
+  const onSubmit = async (value) => {
+    try {
+      setIsLoading(true);
+      await createProblem(value);
+      reset(defaultFormValues);
+      navigation("/add-problem");
+    } catch (error) {
+      console.error("Error creating problem:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="container mx-auto max-w-7xl">
       <div className="card">
@@ -989,13 +991,43 @@ const CreateProblemForm = () => {
             </div>
 
             <div className="card-actions justify-end pt-4 border-t">
-              <button type="submit" className="btn btn-primary btn-lg gap-2">
+              <button
+                type="submit"
+                className={`btn btn-primary btn-lg flex items-center justify-center gap-3 px-6 py-3 rounded-md transition-all duration-300 ease-in-out
+    ${isLoading ? "cursor-not-allowed opacity-70" : "hover:bg-primary-dark"}`}
+                disabled={isLoading}
+              >
                 {isLoading ? (
-                  <span className="loading loading-spinner text-white"></span>
+                  <div className="flex gap-2 p-1">
+                    <svg
+                      className="animate-spin h-6 w-6 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      aria-label="Loading spinner"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    <p>Creating...</p>
+                  </div>
                 ) : (
                   <>
-                    <CheckCircle2 className="w-5 h-5" />
-                    Create Problem
+                    <CheckCircle2 className="w-6 h-6" />
+                    <span className="font-semibold text-lg">
+                      Create Problem
+                    </span>
                   </>
                 )}
               </button>

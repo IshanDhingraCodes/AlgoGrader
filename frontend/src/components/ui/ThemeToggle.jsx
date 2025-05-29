@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("black");
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "light";
+    const storedTheme = localStorage.getItem("theme") || "black";
     setTheme(storedTheme);
     document.documentElement.setAttribute("data-theme", storedTheme);
   }, []);

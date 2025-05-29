@@ -16,12 +16,11 @@ import AllSubmission from "./page/AllSubmission";
 import ProblemSolvedByUser from "./page/ProblemSolvedByUser";
 import UserPlaylist from "./page/UserPlaylist";
 import ProfilePage from "./page/ProfilePage";
-import { useProblemStore } from "./store/useProblemStore";
 import AdminProblemTable from "./page/AdminProblemTable";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-  const { problems } = useProblemStore();
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -98,13 +97,7 @@ const App = () => {
             />
             <Route
               path="/problems"
-              element={
-                authUser ? (
-                  <AdminProblemTable problems={problems} />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
+              element={authUser ? <AdminProblemTable /> : <Navigate to="/" />}
             />
           </Route>
         </Route>
