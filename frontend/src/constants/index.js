@@ -1,4 +1,11 @@
-import { House, Vote, MessageSquareDot, ListVideo } from "lucide-react";
+import {
+  House,
+  Vote,
+  MessageSquareDot,
+  ListVideo,
+  Code,
+  ArrowDownWideNarrow,
+} from "lucide-react";
 
 const sidebarLinks = [
   {
@@ -22,5 +29,17 @@ const sidebarLinks = [
     label: "Playlists",
   },
 ];
+const adminLinks = [
+  {
+    icon: Code,
+    route: "/add-problem",
+    label: "Add Problem",
+  },
+  {
+    icon: ArrowDownWideNarrow,
+    route: "/problems",
+    label: "All Problems",
+  },
+];
 
-export { sidebarLinks };
+export { sidebarLinks, adminLinks };

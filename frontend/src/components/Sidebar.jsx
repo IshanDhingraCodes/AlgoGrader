@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { logo } from "../assets";
-import { sidebarLinks } from "../constants";
+import { sidebarLinks, adminLinks } from "../constants";
 import SidebarFooter from "./SidebarFooter";
 import { useAuthStore } from "../store/useAuthStore";
 import { Code } from "lucide-react";
@@ -23,7 +23,7 @@ const Sidebar = () => {
         {/* Logo */}
         <Link
           to="/home"
-          className="mb-12 cursor-pointer items-center gap-2 flex"
+          className="mb-6 cursor-pointer items-center gap-2 flex"
         >
           <img
             src={logo}
@@ -38,7 +38,7 @@ const Sidebar = () => {
         </Link>
 
         {/* User Links */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {sidebarLinks.map((item, i) => (
             <Link
               key={i}
@@ -55,17 +55,23 @@ const Sidebar = () => {
 
         {/* Admin Links */}
         {authUser?.role === "ADMIN" && (
-          <div className="flex flex-col gap-2 mt-6">
-            <div className="border-t border-gray-500 dark:border-accent my-2" />
-            <p className="text-xs font-semibold uppercase text-base-content px-2 max-xl:hidden">
+          <div className="flex flex-col gap-1">
+            <div className="border-t border-gray-500 dark:border-accent " />
+            <p className="text-xs font-semibold uppercase text-base-content px-2 max-xl:hidden text-center my-2">
               Admin Tools
             </p>
-            <Link to="/add-problem" className={getLinkClasses("/add-problem")}>
-              <Code />
-              <p className="text-16 font-semibold text-base max-xl:hidden whitespace-nowrap truncate">
-                Add Problem
-              </p>
-            </Link>
+            {adminLinks.map((item, i) => (
+              <Link
+                key={i}
+                to={item.route}
+                className={getLinkClasses(item.route)}
+              >
+                <item.icon />
+                <p className="text-16 font-semibold text-base max-xl:hidden whitespace-nowrap truncate">
+                  {item.label}
+                </p>
+              </Link>
+            ))}
           </div>
         )}
       </nav>

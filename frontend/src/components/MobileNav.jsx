@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { sidebarLinks } from "../constants";
+import { adminLinks, sidebarLinks } from "../constants";
 import { Code, LogOut, Menu, X } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import ThemeToggle from "./ui/themeToggle";
@@ -61,19 +61,22 @@ const MobileNav = () => {
 
             {/* Admin Links */}
             {authUser?.role === "ADMIN" && (
-              <div className="flex flex-col gap-2 mt-4">
-                <div className="border-t border-gray-500 dark:border-accent my-2" />
-                <p className="text-xs font-semibold uppercase text-base-content px-2">
+              <div className="flex flex-col gap-1">
+                <div className="border-t border-gray-500 dark:border-accent " />
+                <p className="text-xs font-semibold uppercase text-base-content px-2 max-xl:hidden text-center my-2">
                   Admin Tools
                 </p>
-                <Link
-                  to="/add-problem"
-                  className={getLinkClasses("/add-problem")}
-                  onClick={toggleMenu}
-                >
-                  <Code className="size-5" />
-                  <p className="text-base font-semibold">Add Problem</p>
-                </Link>
+                {adminLinks.map((item, i) => (
+                  <Link
+                    key={i}
+                    to={item.route}
+                    className={getLinkClasses(item.route)}
+                    onClick={toggleMenu}
+                  >
+                    <item.icon className="size-5" />
+                    <p className="text-base font-semibold">{item.label}</p>
+                  </Link>
+                ))}
               </div>
             )}
           </nav>

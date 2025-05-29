@@ -1,15 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Bookmark, Loader2, PencilIcon, Plus, TrashIcon } from "lucide-react";
-// import { useActionStore } from "../store/useActionStore";
+import { Bookmark, Plus } from "lucide-react";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 import CreatePlaylistModal from "./CreatePlaylistModal";
 import AddToPlaylist from "./AddToPlaylist";
 
 const ProblemTable = ({ problems }) => {
   const { authUser } = useAuthStore();
-  // const { onDeleteProblem, isDeletingProblem } = useActionStore();
   const { createPlaylist } = usePlaylistStore();
 
   const [search, setSearch] = useState("");
@@ -38,9 +36,6 @@ const ProblemTable = ({ problems }) => {
     setSelectedProblemId(problemId);
     setIsAddToPlaylistModalOpen(true);
   };
-  // const handleDelete = (id) => {
-  //   onDeleteProblem(id);
-  // };
 
   // Filter problems based on search, difficulty, and tags
   const filteredProblems = useMemo(() => {
@@ -176,26 +171,6 @@ const ProblemTable = ({ problems }) => {
                     </td>
                     <td>
                       <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
-                        {/* {authUser?.role === "ADMIN" && (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleDelete(problem.id)}
-                              className="btn btn-sm btn-error rounded-sm"
-                            >
-                              {isDeletingProblem ? (
-                                <Loader2 className="animate-spin h-4 w-4" />
-                              ) : (
-                                <TrashIcon className="w-4 h-4 text-white" />
-                              )}
-                            </button>
-                            <button
-                              disabled
-                              className="btn btn-sm btn-warning rounded-sm"
-                            >
-                              <PencilIcon className="w-4 h-4 text-white" />
-                            </button>
-                          </div>
-                        )} */}
                         <button
                           className="btn btn-sm btn-outline flex gap-2 items-center rounded-sm"
                           onClick={() => handleAddToPlaylist(problem.id)}
