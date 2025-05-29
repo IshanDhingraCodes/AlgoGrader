@@ -45,8 +45,8 @@ export const executeCode = asyncHandler(async (req, res) => {
 
   const results = await pollBatchResults(tokens);
 
-  console.log("Result__________");
-  console.log(results);
+  // console.log("Result__________");
+  // console.log(results);
 
   //Analyze test case result
   let allPassed = true;
@@ -153,7 +153,90 @@ export const executeCode = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { submission: submissionWithTestCase },
-        "Code Executed Successfully.",
+        "Code Submitted Successfully.",
       ),
     );
+});
+
+export const runCode = asyncHandler(async (req, res) => {
+  const { source_code, language_id, stdin, expected_outputs } = req.body;
+
+  // Validate test cases
+  if (
+    !Array.isArray(stdin) ||
+    stdin.length === 0 ||
+    !Array.isArray(expected_outputs) ||
+    expected_outputs.length !== stdin.length
+  ) {
+    return res
+      .status(400)
+      .json(new ApiError(400, "Invalid or Missing test cases"));
+  }
+
+  // Prepare submissions for Judge0
+  const submissions = stdin.map((input) => ({
+    source_code,
+    language_id,
+    stdin: input,
+  }));
+
+  // Submit to Judge0
+  const submitResponse = await submitBatch(submissions);
+  const tokens = submitResponse.map((res) => res.token);
+  const results = await pollBatchResults(tokens);
+
+  // Analyze results
+  let allPassed = true;
+  const detailedResults = results.map((result, i) => {
+    const stdout = result.stdout?.trim();
+    const expected_output = expected_outputs[i]?.trim();
+    const passed = stdout === expected_output;
+    if (!passed) allPassed = false;
+
+    return {
+      testCase: i + 1,
+      passed,
+      stdout,
+      expected: expected_output,
+      stderr: result.stderr || null,
+      compile_output: result.compile_output || null,
+      status: result.status.description,
+      memory: result.memory ? `${result.memory} KB` : undefined,
+      time: result.time ? `${result.time} s` : undefined,
+    };
+  });
+
+  const submission = {
+    sourceCode: source_code,
+    language: getLanguageName(language_id),
+    stdin: stdin.join("\n"),
+    stdout: JSON.stringify(detailedResults.map((r) => r.stdout)),
+    stderr: detailedResults.some((r) => r.stderr)
+      ? JSON.stringify(detailedResults.map((r) => r.stderr))
+      : null,
+    compileOutput: detailedResults.some((r) => r.compile_output)
+      ? JSON.stringify(detailedResults.map((r) => r.compile_output))
+      : null,
+    status: allPassed ? "Accepted" : "Wrong Answer",
+    memory: JSON.stringify(detailedResults.map((r) => r.memory || "0 KB")),
+    time: JSON.stringify(detailedResults.map((r) => r.time || "0 s")),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    testCases: detailedResults.map((result, i) => ({
+      id: `${i + 1}`,
+      testCase: result.testCase,
+      passed: result.passed,
+      stdout: result.stdout,
+      expected: result.expected,
+      stderr: result.stderr,
+      compileOutput: result.compile_output,
+      status: result.status,
+      memory: result.memory,
+      time: result.time,
+    })),
+  };
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { submission }, "Code Executed Successfully."));
 });
