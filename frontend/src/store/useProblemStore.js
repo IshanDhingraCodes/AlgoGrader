@@ -9,12 +9,12 @@ export const useProblemStore = create((set) => ({
   isProblemsLoading: false,
   isProblemLoading: false,
   isCreatingProblem: false,
+  isUpdatingProblem: false,
 
   createProblem: async (data) => {
     set({ isCreatingProblem: true });
     try {
       const res = await axiosInstance.post("/problems/create-problem", data);
-      // console.log("signUp data:", data);
       toast.success(res.data.message || "Problem Created successfully⚡");
     } catch (error) {
       console.log("Error creating problem:", error);
@@ -27,9 +27,7 @@ export const useProblemStore = create((set) => ({
   getAllProblems: async () => {
     try {
       set({ isProblemsLoading: true });
-
       const res = await axiosInstance.get("/problems/get-all-problems");
-      //   console.log(res.data);
       set({ problems: res.data.data });
     } catch (error) {
       console.log("Error getting all problems", error);
@@ -42,12 +40,8 @@ export const useProblemStore = create((set) => ({
   getProblemById: async (id) => {
     try {
       set({ isProblemLoading: true });
-
       const res = await axiosInstance.get(`/problems/get-problem/${id}`);
-      // console.log(res.data.data);
       set({ problem: res.data.data });
-
-      // toast.success(res.data.message);
     } catch (error) {
       console.log("Error getting problem", error);
       toast.error("Error in getting problem.");
@@ -56,10 +50,25 @@ export const useProblemStore = create((set) => ({
     }
   },
 
+  updateProblem: async (id, data) => {
+    set({ isUpdatingProblem: true });
+    try {
+      const res = await axiosInstance.put(
+        `/problems/update-problem/${id}`,
+        data
+      );
+      toast.success(res.data.message || "Problem Updated successfully⚡");
+    } catch (error) {
+      console.log("Error updating problem:", error);
+      toast.error("Error updating problem.");
+    } finally {
+      set({ isUpdatingProblem: false });
+    }
+  },
+
   getSolvedProblemByUser: async () => {
     try {
       const res = await axiosInstance.get("/problems/get-solved-problems");
-
       set({ solvedProblems: res.data.data });
     } catch (error) {
       console.log("Error getting solved problems", error);

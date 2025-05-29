@@ -4,3 +4,7 @@
 }
 
 @custom-variant dark (&:where([data-theme=black], [data-theme=black] *));
+
+* {
+  scrollbar-width: none;
+}

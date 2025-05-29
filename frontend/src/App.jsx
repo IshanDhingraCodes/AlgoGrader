@@ -17,6 +17,7 @@ import ProblemSolvedByUser from "./page/ProblemSolvedByUser";
 import UserPlaylist from "./page/UserPlaylist";
 import ProfilePage from "./page/ProfilePage";
 import AdminProblemTable from "./page/AdminProblemTable";
+import UpdateProblem from "./page/UpdateProblem";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -98,6 +99,10 @@ const App = () => {
             <Route
               path="/problems"
               element={authUser ? <AdminProblemTable /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/update-problem/:id"
+              element={authUser ? <UpdateProblem /> : <Navigate to="/" />}
             />
           </Route>
         </Route>

@@ -185,12 +185,16 @@ const AdminProblemTable = () => {
                                   <TrashIcon className="w-4 h-4 text-white" />
                                 )}
                               </button>
-                              <button
-                                disabled
-                                className="btn btn-sm btn-warning rounded-sm"
+                              <Link
+                                to={`/update-problem/${problem.id}`}
+                                className="btn btn-sm btn-outline btn-base-100 rounded-md flex items-center gap-2 hover:bg-base-300 hover:text-base-content transition-colors duration-200 focus:ring-2 focus:ring-base-300 focus:ring-opacity-50"
+                                aria-label={`Edit problem: ${problem.title}`}
                               >
-                                <PencilIcon className="w-4 h-4 text-white" />
-                              </button>
+                                <PencilIcon className="w-4 h-4" />
+                                <span className="hidden sm:inline text-sm font-medium">
+                                  Edit
+                                </span>
+                              </Link>
                             </div>
                           )}
                         </div>
