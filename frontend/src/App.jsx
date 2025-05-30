@@ -31,7 +31,7 @@ const App = () => {
     document.documentElement.setAttribute("data-theme", storedTheme);
   }, []);
 
-  if (isCheckingAuth && !authUser) {
+  if (isCheckingAuth) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />

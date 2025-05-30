@@ -74,7 +74,7 @@ const ProblemSolvedByUser = () => {
 
   return (
     <div className="w-full flex-1 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
+      <div className="w-full flex flex-col gap-8">
         <div>
           <h1 className="text-4xl font-bold text-start mb-2">
             Solved <span className="text-primary">Problems</span>
