@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import Editor from "@monaco-editor/react";
 import {
   FileText,
@@ -8,6 +9,8 @@ import {
   ChevronRight,
   Terminal,
   ThumbsUp,
+  Bookmark,
+  Share2,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
@@ -17,6 +20,8 @@ import { getLanguageId } from "../lib/lang";
 import SubmissionResults from "../components/SubmissionResults";
 import SubmissionsList from "../components/SubmissionList";
 import ThemeToggle from "../components/ui/themeToggle";
+import AddToPlaylist from "../components/AddToPlaylist";
+import { shareProblem } from "../lib/shareProblemUrl";
 
 const ProblemPage = () => {
   const { id } = useParams();
@@ -40,7 +45,9 @@ const ProblemPage = () => {
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
-  const [testcases, setTestCases] = useState([]);
+  const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
+    useState(false);
+  const [selectedProblemId, setSelectedProblemId] = useState(null);
 
   useEffect(() => {
     getProblemById(id);
@@ -50,12 +57,6 @@ const ProblemPage = () => {
   useEffect(() => {
     if (problem) {
       setCode(problem.codeSnippets?.[selectedLanguage] || "");
-      setTestCases(
-        problem.testcases?.map((tc) => ({
-          input: tc.input,
-          output: tc.output,
-        })) || []
-      );
     }
   }, [problem, selectedLanguage]);
 
@@ -72,18 +73,27 @@ const ProblemPage = () => {
   };
 
   const handleSubmitCode = useCallback(
-    (e) => {
+    async (e) => {
       if (e) e.preventDefault();
       try {
         const language_id = getLanguageId(selectedLanguage);
         const stdin = problem.testcases.map((tc) => tc.input);
         const expected_outputs = problem.testcases.map((tc) => tc.output);
-        executeCode(code, language_id, stdin, expected_outputs, id);
+
+        await executeCode(code, language_id, stdin, expected_outputs, id); // wait for execution
+        await getSubmissionCountForProblem(id); // now update count
       } catch (error) {
         console.log("Error executing code", error);
       }
     },
-    [code, selectedLanguage, problem, executeCode, id]
+    [
+      code,
+      selectedLanguage,
+      problem,
+      executeCode,
+      id,
+      getSubmissionCountForProblem,
+    ]
   );
 
   const handleRunCode = useCallback(() => {
@@ -97,46 +107,56 @@ const ProblemPage = () => {
     }
   }, [code, selectedLanguage, problem, runcode]);
 
+  const handleAddToPlaylist = (id) => {
+    setSelectedProblemId(id);
+    setIsAddToPlaylistModalOpen(true);
+  };
+
+  const handleShare = () => {
+    const url = window.location.href;
+    shareProblem(problem.title, url);
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "description":
         return (
-          <div className="prose max-w-none">
-            <p className="text-lg mb-6 whitespace-pre-wrap">
+          <div className="prose max-w-none dark:prose-invert space-y-5 lg:pb-20">
+            <p className="text-base-content/90 text-sm md:text-base whitespace-pre-wrap">
               {problem.description}
             </p>
-
             {problem.examples && (
               <>
-                <h3 className="text-xl font-bold mb-4">Examples:</h3>
+                <h3 className="text-lg md:text-xl font-bold text-base-content">
+                  Examples
+                </h3>
                 {Object.entries(problem.examples).map(([lang, example]) => (
                   <div
                     key={lang}
-                    className="bg-base-200 p-6 rounded-xl mb-6 font-mono"
-                    tabIndex={0}
+                    className="bg-base-200 p-4 rounded-lg shadow-sm"
                   >
                     <div className="mb-4">
-                      <div className="text-indigo-300 mb-2 font-semibold">
-                        Input:
+                      <div className="text-sm font-semibold text-primary mb-2">
+                        Input
                       </div>
-                      <span className="bg-black/90 px-4 py-1 rounded-lg text-white whitespace-pre-wrap">
+                      <pre className="bg-black/80 text-white p-3 rounded-lg text-xs md:text-sm whitespace-pre-wrap">
                         {example.input}
-                      </span>
+                      </pre>
                     </div>
                     <div className="mb-4">
-                      <div className="text-indigo-300 mb-2 font-semibold">
-                        Output:
+                      <div className="text-sm font-semibold text-primary mb-2">
+                        Output
                       </div>
-                      <span className="bg-black/90 px-4 py-1 rounded-lg text-white whitespace-pre-wrap">
+                      <pre className="bg-black/80 text-white p-3 rounded-lg text-xs md:text-sm whitespace-pre-wrap">
                         {example.output}
-                      </span>
+                      </pre>
                     </div>
                     {example.explanation && (
                       <div>
-                        <div className="text-emerald-300 mb-2 font-semibold">
-                          Explanation:
+                        <div className="text-sm font-semibold text-success mb-2">
+                          Explanation
                         </div>
-                        <p className="text-base-content/70 whitespace-pre-wrap">
+                        <p className="text-base-content/80 text-xs md:text-sm whitespace-pre-wrap">
                           {example.explanation}
                         </p>
                       </div>
@@ -145,14 +165,15 @@ const ProblemPage = () => {
                 ))}
               </>
             )}
-
             {problem.constraints && (
               <>
-                <h3 className="text-xl font-bold mb-4">Constraints:</h3>
-                <div className="bg-base-200 p-6 rounded-xl whitespace-pre-wrap">
-                  <span className="bg-black/90 px-4 py-1 rounded-lg text-white text-lg">
+                <h3 className="text-lg md:text-xl font-bold text-base-content">
+                  Constraints
+                </h3>
+                <div className="bg-base-200 p-4 rounded-lg shadow-sm">
+                  <pre className="bg-black/80 text-white p-3 rounded-lg text-xs md:text-sm whitespace-pre-wrap">
                     {problem.constraints}
-                  </span>
+                  </pre>
                 </div>
               </>
             )}
@@ -169,11 +190,11 @@ const ProblemPage = () => {
         return (
           <div className="p-4">
             {problem?.hints ? (
-              <div className="bg-base-200 p-6 rounded-xl whitespace-pre-wrap">
+              <div className="bg-base-200 p-4 rounded-lg shadow-sm text-base-content/80 text-sm md:text-base">
                 {problem.hints}
               </div>
             ) : (
-              <div className="text-center text-base-content/70">
+              <div className="text-center text-base-content/70 py-10">
                 No hints available
               </div>
             )}
@@ -186,101 +207,155 @@ const ProblemPage = () => {
 
   if (isProblemLoading || !problem) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-base-100/80 z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-base-100/90 z-50">
         <span className="loading loading-spinner loading-xl text-primary"></span>
       </div>
     );
   }
 
+  const Navbar = () => (
+    <nav className="navbar bg-base-100 shadow px-4 py-3 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+      {/* Left: Breadcrumb */}
+      <div className="flex flex-wrap items-center gap-2 text-sm md:text-base text-base-content/80">
+        <Link to="/" className="flex items-center gap-1 hover:text-primary">
+          <Home className="w-5 h-5" />
+          <span className="hidden sm:inline">Home</span>
+        </Link>
+        <ChevronRight className="w-4 h-4 text-base-content/50" />
+        <span className="text-base-content/60 font-medium truncate max-w-[10rem] sm:max-w-[15rem]">
+          Problems
+        </span>
+        <ChevronRight className="w-4 h-4 text-base-content/50" />
+        <span className="font-semibold text-base-content truncate max-w-[12rem] sm:max-w-[20rem]">
+          {problem.title}
+        </span>
+      </div>
+
+      {/* Center: Run and Submit */}
+      <div className="flex flex-wrap justify-center gap-2">
+        <button
+          onClick={handleRunCode}
+          disabled={isRunning}
+          className={`btn btn-sm btn-outline btn-primary flex items-center gap-1 rounded-md ${
+            isRunning ? "opacity-70" : "hover:bg-primary/70"
+          }`}
+        >
+          {isRunning ? (
+            <span className="loading loading-spinner loading-xs"></span>
+          ) : (
+            <Terminal className="w-4 h-4" />
+          )}
+          <span className="inline">Run Code</span>
+        </button>
+
+        <button
+          onClick={handleSubmitCode}
+          disabled={isExecuting}
+          className={`btn btn-sm btn-outline btn-success flex items-center gap-1 rounded-md ${
+            isExecuting ? "opacity-70" : "hover:bg-success/10"
+          }`}
+        >
+          {isExecuting ? (
+            <span className="loading loading-spinner loading-xs"></span>
+          ) : (
+            <ThumbsUp className="w-4 h-4" />
+          )}
+          <span className="inline">Submit</span>
+        </button>
+      </div>
+
+      {/* Right: Language, Bookmark, Share, Theme */}
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <select
+          className="select select-sm select-primary w-32 text-sm"
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
+        >
+          {Object.keys(problem.codeSnippets || {}).map((lang) => (
+            <option key={lang} value={lang}>
+              {lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()}
+            </option>
+          ))}
+        </select>
+
+        <button
+          className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
+          onClick={() => handleAddToPlaylist(id)}
+        >
+          <Bookmark className="w-4 h-4" />
+        </button>
+
+        <button
+          className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
+          onClick={handleShare}
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
+
+        <ThemeToggle />
+      </div>
+    </nav>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 w-full mx-auto">
-      {/* Navbar */}
-      <nav className="navbar bg-base-100 shadow-md px-6 py-3 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-10">
-        <div className="flex items-center gap-2 text-primary text-sm md:text-base truncate">
-          <Link to="/" className="flex items-center gap-1">
-            <Home className="w-6 h-6" />
-            Home
-          </Link>
-          <ChevronRight className="w-4 h-4 text-base-content/50" />
-          <span className="font-semibold text-base-content/70">Problems</span>
-          <ChevronRight className="w-4 h-4 text-base-content/50" />
-          <span className="font-bold text-base-content truncate max-w-xs">
-            {problem.title}
-          </span>
-        </div>
-
-        <div className="flex gap-3">
-          {/* Run Code Button */}
-          <button
-            onClick={handleRunCode}
-            disabled={isRunning}
-            aria-label="Run Code"
-            className={`relative inline-flex items-center justify-center px-4 py-2 text-sm md:text-base font-medium rounded-md transition duration-200 border shadow-sm
-      ${isRunning ? "opacity-70 cursor-not-allowed" : ""}
-      bg-white text-blue-600 border-blue-600 hover:bg-blue-100 hover:text-blue-800
-      dark:bg-gray-900 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-800 dark:hover:text-white
-    `}
-          >
-            {isRunning ? (
-              <>
-                <span className="absolute left-3 w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                <span className="ml-5">Running...</span>
-              </>
+    <div className="flex flex-col bg-gradient-to-br from-base-200 to-base-300 min-h-screen lg:h-screen">
+      <Navbar />
+      <main className="flex-grow p-2">
+        <div className="block lg:hidden space-y-4">
+          <div className="h-[400px] bg-base-100 rounded-lg shadow-md">
+            <Editor
+              height="100%"
+              language={selectedLanguage.toLowerCase()}
+              theme="vs-dark"
+              value={code}
+              onChange={(value) => setCode(value || "")}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: "on",
+                automaticLayout: true,
+                fontFamily: "'Fira Code', monospace",
+                scrollBeyondLastLine: false,
+              }}
+            />
+          </div>
+          <div className="bg-base-100 rounded-lg shadow-md p-4">
+            {submission ? (
+              <SubmissionResults submission={submission} />
+            ) : runResult ? (
+              <SubmissionResults submission={runResult} />
             ) : (
               <>
-                <Terminal className="w-4 h-4 mr-2" />
-                Run Code
+                <h3 className="text-lg font-bold text-base-content mb-4">
+                  Test Cases
+                </h3>
+                <div className="overflow-x-auto border border-base-300 rounded-lg">
+                  <table className="table w-full table-zebra text-sm">
+                    <thead className="bg-base-200">
+                      <tr>
+                        <th className="p-2 text-sm">Input</th>
+                        <th className="p-2 text-sm">Expected Output</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {problem.testcases.map((tc, index) => (
+                        <tr key={index}>
+                          <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
+                            {tc.input}
+                          </td>
+                          <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
+                            {tc.output}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
-          </button>
-
-          {/* Submit Button */}
-          <button
-            onClick={handleSubmitCode}
-            disabled={isExecuting}
-            aria-label="Submit Code"
-            className={`relative inline-flex items-center justify-center px-4 py-2 text-sm md:text-base font-medium rounded-md transition duration-200 border shadow-sm
-      ${isExecuting ? "opacity-70 cursor-not-allowed" : ""}
-      bg-white text-green-600 border-green-600 hover:bg-green-100 hover:text-green-800
-      dark:bg-gray-900 dark:text-green-400 dark:border-green-700 dark:hover:bg-green-800 dark:hover:text-white
-    `}
-          >
-            {isExecuting ? (
-              <>
-                <span className="absolute left-3 w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                <span className="ml-5">Submitting...</span>
-              </>
-            ) : (
-              <>
-                <ThumbsUp className="w-4 h-4 mr-2" />
-                Submit
-              </>
-            )}
-          </button>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 md:gap-3">
-          <ThemeToggle />
-          <select
-            className="select select-bordered select-primary w-36"
-            value={selectedLanguage}
-            onChange={handleLanguageChange}
-          >
-            {Object.keys(problem.codeSnippets || {}).map((lang) => (
-              <option key={lang} value={lang}>
-                {lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()}
-              </option>
-            ))}
-          </select>
-        </div>
-      </nav>
-
-      {/* Page Content */}
-      <div className="container mx-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Section */}
-          <div className="card bg-base-100 shadow-lg rounded-lg">
-            <div className="tabs tabs-bordered flex gap-1">
+          </div>
+          <div className="bg-base-100 rounded-lg shadow-md">
+            <div className="tabs p-2 border-b border-base-300">
               {["description", "submissions", "hints"].map((tab) => {
                 const icons = {
                   description: FileText,
@@ -293,17 +368,17 @@ const ProblemPage = () => {
                     key={tab}
                     role="tab"
                     aria-selected={activeTab === tab}
-                    className={`tab flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                    className={`tab flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                       activeTab === tab
-                        ? "tab-active bg-primary text-primary-content"
-                        : "hover:bg-base-200"
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "hover:bg-base-200 text-base-content/70"
                     }`}
                     onClick={() => setActiveTab(tab)}
                   >
                     <Icon className="w-4 h-4" />
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     {tab === "submissions" && submissionCount > 0 && (
-                      <span className="ml-2 inline-flex items-center justify-center px-2 text-xs font-semibold bg-base-200 rounded-full">
+                      <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
                         {submissionCount}
                       </span>
                     )}
@@ -311,75 +386,132 @@ const ProblemPage = () => {
                 );
               })}
             </div>
-
-            <div className="p-6 overflow-y-auto max-h-[800px]">
-              {renderTabContent()}
-            </div>
-          </div>
-
-          {/* Right Section: Editor & Results */}
-          <div className="flex flex-col gap-6">
-            <div className="card bg-base-100 shadow-lg rounded-lg h-[600px] -z-0">
-              <div className="tabs tabs-bordered">
-                <button className="tab tab-active flex items-center gap-2 px-6 py-3">
-                  <Terminal className="w-5 h-5" />
-                  Code Editor
-                </button>
-              </div>
-              <Editor
-                height="100%"
-                language={selectedLanguage.toLowerCase()}
-                theme="vs-dark"
-                value={code}
-                onChange={(value) => setCode(value || "")}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 16,
-                  lineNumbers: "on",
-                  automaticLayout: true,
-                  fontFamily: "'Fira Code', monospace",
-                }}
-              />
-            </div>
-
-            <div className="card bg-base-100 shadow-lg rounded-lg overflow-hidden">
-              <div className="card-body p-6">
-                {submission ? (
-                  <SubmissionResults submission={submission} />
-                ) : runResult ? (
-                  <SubmissionResults submission={runResult} />
-                ) : (
-                  <>
-                    <h3 className="text-2xl font-bold mb-4">Test Cases</h3>
-                    <div className="overflow-x-auto border border-base-300 rounded-lg">
-                      <table className="table w-full table-zebra">
-                        <thead className="bg-base-200">
-                          <tr>
-                            <th>Input</th>
-                            <th>Expected Output</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {testcases.map((tc, index) => (
-                            <tr key={index}>
-                              <td className="font-mono whitespace-pre-wrap">
-                                {tc.input}
-                              </td>
-                              <td className="font-mono whitespace-pre-wrap">
-                                {tc.output}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+            <div className="p-4">{renderTabContent()}</div>
           </div>
         </div>
-      </div>
+
+        <div className="hidden lg:block h-[calc(100vh-5rem)]">
+          <PanelGroup direction="horizontal">
+            <Panel defaultSize={55} minSize={30} className="pr-2">
+              <PanelGroup direction="vertical">
+                <Panel
+                  defaultSize={60}
+                  minSize={20}
+                  className="flex-1 bg-base-100 rounded-lg shadow-md"
+                >
+                  <Editor
+                    height="100%"
+                    language={selectedLanguage.toLowerCase()}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || "")}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      automaticLayout: true,
+                      fontFamily: "'Fira Code', monospace",
+                      scrollBeyondLastLine: false,
+                    }}
+                  />
+                </Panel>
+
+                <PanelResizeHandle className="relative h-4 flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all">
+                  <div className="h-1 bg-base-100 rounded-full w-full relative">
+                    <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-3 w-14 rounded-full bg-gray-500 backdrop-blur-sm border border-base-300 shadow-sm group-hover:shadow-md group-hover:bg-accent group-hover:scale-105 transition-all duration-300"></div>
+                  </div>
+                </PanelResizeHandle>
+
+                <Panel
+                  defaultSize={40}
+                  minSize={20}
+                  className="bg-base-100 rounded-lg shadow-md p-4 overflow-y-auto"
+                >
+                  {submission ? (
+                    <SubmissionResults submission={submission} />
+                  ) : runResult ? (
+                    <SubmissionResults submission={runResult} />
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-bold text-base-content mb-4">
+                        Test Cases
+                      </h3>
+                      <div className="overflow-x-auto border border-base-300 rounded-lg">
+                        <table className="table w-full table-zebra text-sm">
+                          <thead className="bg-base-200">
+                            <tr>
+                              <th className="p-2 text-sm">Input</th>
+                              <th className="p-2 text-sm">Expected Output</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {problem.testcases.map((tc, index) => (
+                              <tr key={index}>
+                                <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
+                                  {tc.input}
+                                </td>
+                                <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
+                                  {tc.output}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )}
+                </Panel>
+              </PanelGroup>
+            </Panel>
+            <PanelResizeHandle className="relative w-4 flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all">
+              <div className="w-1 bg-base-100 rounded-full h-full relative">
+                <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-3 h-14 rounded-full bg-gray-500 backdrop-blur-sm border border-base-300 shadow-sm group-hover:shadow-md group-hover:bg-accent group-hover:scale-105 transition-all duration-300"></div>
+              </div>
+            </PanelResizeHandle>
+            <Panel className="bg-base-100 rounded-lg shadow-md overflow-y-auto">
+              <div className="tabs p-2 border-b border-base-300">
+                {["description", "submissions", "hints"].map((tab) => {
+                  const icons = {
+                    description: FileText,
+                    submissions: Code2,
+                    hints: Lightbulb,
+                  };
+                  const Icon = icons[tab];
+                  return (
+                    <button
+                      key={tab}
+                      role="tab"
+                      aria-selected={activeTab === tab}
+                      className={`tab flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                        activeTab === tab
+                          ? "bg-accent text-accent-content font-semibold"
+                          : "hover:bg-accent text-accent-content"
+                      }`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      {tab === "submissions" && submissionCount > 0 && (
+                        <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
+                          {submissionCount}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="p-4 overflow-y-auto h-full">
+                {renderTabContent()}
+              </div>
+            </Panel>
+          </PanelGroup>
+        </div>
+      </main>
+      <AddToPlaylist
+        isOpen={isAddToPlaylistModalOpen}
+        onClose={() => setIsAddToPlaylistModalOpen(false)}
+        problemId={selectedProblemId}
+      />
     </div>
   );
 };

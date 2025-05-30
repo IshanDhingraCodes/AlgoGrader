@@ -25,14 +25,14 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 sm:px-6 md:px-8"
       aria-modal="true"
       role="dialog"
       aria-labelledby="add-playlist-title"
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-base-100 shadow-2xl ring-1 ring-black ring-opacity-5 animate-fade-in">
+      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl bg-white dark:bg-base-100 shadow-xl ring-1 ring-black/10 animate-fade-in transition-transform transform scale-95">
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-base-300">
+        <header className="flex items-center justify-between border-b border-gray-200 dark:border-base-300 px-5 py-4">
           <h2
             id="add-playlist-title"
             className="text-lg font-semibold text-gray-900 dark:text-white"
@@ -42,14 +42,14 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
           <button
             onClick={onClose}
             className="btn btn-ghost btn-sm btn-circle"
-            aria-label="Close add to playlist modal"
+            aria-label="Close modal"
           >
             <X className="h-5 w-5" />
           </button>
         </header>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6 px-6 py-6">
+        <form onSubmit={handleSubmit} className="space-y-6 px-5 py-6">
           <div>
             <label
               htmlFor="playlist-select"
@@ -59,14 +59,14 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
             </label>
             <select
               id="playlist-select"
-              className="select select-bordered w-full cursor-pointer"
+              className="select select-bordered w-full"
               value={selectedPlaylist}
               onChange={(e) => setSelectedPlaylist(e.target.value)}
               disabled={isLoading}
               required
             >
               <option value="" disabled>
-                Select a playlist
+                Choose a playlist
               </option>
               {playlists.map((playlist) => (
                 <option key={playlist.id} value={playlist.id}>
@@ -76,7 +76,8 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
             </select>
           </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}

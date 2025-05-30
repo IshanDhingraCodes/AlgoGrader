@@ -53,10 +53,6 @@ export const getAllSubmissionsForProblem = asyncHandler(async (req, res) => {
     },
   });
 
-  if (!submission) {
-    return res.status(404).json(new ApiError(404, "No submission found."));
-  }
-
   return res
     .status(200)
     .json(
