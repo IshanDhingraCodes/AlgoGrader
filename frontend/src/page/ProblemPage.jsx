@@ -14,7 +14,7 @@ import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
 import { getLanguageId } from "../lib/lang";
-import SubmissionResults from "../components/Submission";
+import SubmissionResults from "../components/SubmissionResults";
 import SubmissionsList from "../components/SubmissionList";
 import ThemeToggle from "../components/ui/themeToggle";
 
