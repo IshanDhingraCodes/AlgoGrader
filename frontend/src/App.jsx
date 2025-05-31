@@ -18,18 +18,16 @@ import UserPlaylist from "./page/UserPlaylist";
 import ProfilePage from "./page/ProfilePage";
 import AdminProblemTable from "./page/AdminProblemTable";
 import UpdateProblem from "./page/UpdateProblem";
+import { useThemeStore } from "./store/useThemeStore";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { initializeTheme } = useThemeStore();
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-theme", storedTheme);
-  }, []);
+    initializeTheme();
+  }, [checkAuth, initializeTheme]);
 
   if (isCheckingAuth) {
     return (

@@ -16,10 +16,11 @@ import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
+import { useThemeStore } from "../store/useThemeStore";
 import { getLanguageId } from "../lib/lang";
 import SubmissionResults from "../components/SubmissionResults";
 import SubmissionsList from "../components/SubmissionList";
-import ThemeToggle from "../components/ui/themeToggle";
+import ThemeToggle from "../components/ui/ThemeToggle";
 import AddToPlaylist from "../components/AddToPlaylist";
 import { shareProblem } from "../lib/shareProblemUrl";
 
@@ -41,6 +42,7 @@ const ProblemPage = () => {
     getSubmissionCountForProblem,
     submissionCount,
   } = useSubmissionStore();
+  const { theme } = useThemeStore();
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
@@ -306,7 +308,7 @@ const ProblemPage = () => {
             <Editor
               height="100%"
               language={selectedLanguage.toLowerCase()}
-              theme="vs-dark"
+              theme={theme === "light" ? "vs" : "vs-dark"}
               value={code}
               onChange={(value) => setCode(value || "")}
               options={{
@@ -402,7 +404,7 @@ const ProblemPage = () => {
                   <Editor
                     height="100%"
                     language={selectedLanguage.toLowerCase()}
-                    theme="vs-dark"
+                    theme={theme === "light" ? "vs" : "vs-dark"}
                     value={code}
                     onChange={(value) => setCode(value || "")}
                     options={{
