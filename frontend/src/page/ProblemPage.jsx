@@ -34,6 +34,7 @@ const ProblemPage = () => {
     isRunning,
     runResult,
     runcode,
+    resetExecution,
   } = useExecutionStore();
   const {
     submission: submissions,
@@ -50,6 +51,10 @@ const ProblemPage = () => {
   const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
     useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
+
+  useEffect(() => {
+    resetExecution();
+  }, [id, resetExecution]);
 
   useEffect(() => {
     getProblemById(id);

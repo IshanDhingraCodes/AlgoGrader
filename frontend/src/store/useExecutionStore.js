@@ -59,4 +59,8 @@ export const useExecutionStore = create((set) => ({
       set({ isRunning: false });
     }
   },
+
+  resetExecution: () => {
+    set({ submission: null, runResult: null });
+  },
 }));
