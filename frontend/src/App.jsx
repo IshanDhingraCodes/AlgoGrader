@@ -106,7 +106,7 @@ const App = () => {
         </Route>
         <Route
           path="/problem/:id"
-          element={authUser ? <ProblemPage /> : <Navigate to={"/"} />}
+          element={authUser ? <ProblemPage /> : <Navigate to={"/sign-in"} />}
         />
       </Routes>
     </>

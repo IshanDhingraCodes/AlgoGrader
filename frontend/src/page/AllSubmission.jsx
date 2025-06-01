@@ -11,6 +11,8 @@ import {
   Filter,
   X,
 } from "lucide-react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const AllSubmission = () => {
   const { submissions, getAllSubmissions } = useSubmissionStore();
@@ -55,7 +57,7 @@ const AllSubmission = () => {
   });
 
   return (
-    <div className="flex flex-col flex-1 w-full px-5 sm:px-8 py-7 lg:py-12 gap-8 max-h-screen md:overflow-y-scroll">
+    <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
       <header className="flex flex-col md:flex-row justify-between items-center gap-6">
         <h1 className="text-4xl font-bold text-primary text-start w-full md:w-auto">
           My Submissions
@@ -173,11 +175,18 @@ const AllSubmission = () => {
                   {/* Solution Code */}
                   <section className="mb-6">
                     <h3 className="flex items-center gap-2 font-semibold text-lg mb-3">
-                      <Code size={20} /> Solution Code
+                      <Code size={20} />
                     </h3>
-                    <pre className="mockup-code bg-neutral text-neutral-content p-4 overflow-x-auto rounded-lg max-h-[300px] whitespace-pre-wrap">
-                      <code>{submission.sourceCode}</code>
-                    </pre>
+                    <div className="bg-neutral text-neutral-content p-4 overflow-x-auto rounded-lg max-h-[300px]">
+                      <SyntaxHighlighter
+                        language={submission.language?.toLowerCase()}
+                        style={vscDarkPlus}
+                        customStyle={{ background: "transparent", margin: 0 }}
+                        wrapLongLines
+                      >
+                        {submission.sourceCode}
+                      </SyntaxHighlighter>
+                    </div>
                   </section>
 
                   {/* Input and Output */}
@@ -189,7 +198,11 @@ const AllSubmission = () => {
                       </h3>
                       <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
                         <pre className="p-4 min-h-[100px]">
-                          <code>{submission.stdin || "No input provided"}</code>
+                          <code>
+                            {Array.isArray(submission.stdin?.split?.("\n"))
+                              ? submission.stdin.split("\n").join("\n  ")
+                              : submission.stdin || "No input provided"}
+                          </code>
                         </pre>
                       </div>
                     </div>
@@ -203,7 +216,7 @@ const AllSubmission = () => {
                         <pre className="p-4 min-h-[100px]">
                           <code>
                             {Array.isArray(JSON.parse(submission.stdout))
-                              ? JSON.parse(submission.stdout).join("")
+                              ? JSON.parse(submission.stdout).join("\n  ")
                               : submission.stdout || "No output"}
                           </code>
                         </pre>
