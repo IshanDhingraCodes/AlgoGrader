@@ -80,9 +80,11 @@ const SubmissionsList = ({ submissions, isLoading }) => {
     );
   }
 
+  const reversedSubmissions = [...submissions].reverse();
+
   return (
     <div className="space-y-4">
-      {submissions.map((submission) => {
+      {reversedSubmissions.map((submission) => {
         const avgMemory = calculateAverageMemory(submission.memory);
         const avgTime = calculateAverageTime(submission.time);
 

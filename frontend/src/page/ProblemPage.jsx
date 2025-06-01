@@ -11,6 +11,7 @@ import {
   ThumbsUp,
   Bookmark,
   Share2,
+  RefreshCcw,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
@@ -56,6 +57,7 @@ const ProblemPage = () => {
   const [isCreatePlaylistModalOpen, setIsCreatePlaylistModalOpen] =
     useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
+  const [isCodeModified, setIsCodeModified] = useState(false);
 
   useEffect(() => {
     resetExecution();
@@ -68,7 +70,9 @@ const ProblemPage = () => {
 
   useEffect(() => {
     if (problem) {
-      setCode(problem.codeSnippets?.[selectedLanguage] || "");
+      const initialCode = problem.codeSnippets?.[selectedLanguage] || "";
+      setCode(initialCode);
+      setIsCodeModified(false);
     }
   }, [problem, selectedLanguage]);
 
@@ -82,7 +86,18 @@ const ProblemPage = () => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
     setCode(problem.codeSnippets?.[lang] || "");
+    setIsCodeModified(false);
   };
+
+  const handleCodeChange = useCallback(
+    (value) => {
+      setCode(value || "");
+      setIsCodeModified(
+        (value || "") !== (problem.codeSnippets?.[selectedLanguage] || "")
+      );
+    },
+    [problem, selectedLanguage]
+  );
 
   const handleSubmitCode = useCallback(
     async (e) => {
@@ -94,6 +109,7 @@ const ProblemPage = () => {
 
         await executeCode(code, language_id, stdin, expected_outputs, id);
         await getSubmissionCountForProblem(id);
+        getSubmissionForProblem(id);
       } catch (error) {
         console.log("Error executing code", error);
       }
@@ -105,6 +121,7 @@ const ProblemPage = () => {
       executeCode,
       id,
       getSubmissionCountForProblem,
+      getSubmissionForProblem,
     ]
   );
 
@@ -118,6 +135,11 @@ const ProblemPage = () => {
       console.log("Error running code", error);
     }
   }, [code, selectedLanguage, problem, runcode]);
+
+  const handleResetCode = useCallback(() => {
+    setCode(problem.codeSnippets?.[selectedLanguage] || "");
+    setIsCodeModified(false);
+  }, [problem, selectedLanguage]);
 
   const handleAddToPlaylist = (problemId) => {
     setSelectedProblemId(problemId);
@@ -254,13 +276,13 @@ const ProblemPage = () => {
         </span>
       </div>
 
-      {/* Center: Run and Submit */}
+      {/* Center: Run, Submit, and Reset */}
       <div className="flex flex-wrap justify-center gap-2">
         <button
           onClick={handleRunCode}
-          disabled={isRunning}
+          disabled={isRunning || isExecuting}
           className={`btn btn-sm btn-outline btn-primary flex items-center gap-1 rounded-md ${
-            isRunning ? "opacity-70" : "hover:bg-primary/70"
+            isRunning || isExecuting ? "opacity-70" : "hover:bg-primary/70"
           }`}
         >
           {isRunning ? (
@@ -273,9 +295,9 @@ const ProblemPage = () => {
 
         <button
           onClick={handleSubmitCode}
-          disabled={isExecuting}
+          disabled={isExecuting || isRunning}
           className={`btn btn-sm btn-outline btn-success flex items-center gap-1 rounded-md ${
-            isExecuting ? "opacity-70" : "hover:bg-success/10"
+            isExecuting || isRunning ? "opacity-70" : "hover:bg-success/10"
           }`}
         >
           {isExecuting ? (
@@ -285,6 +307,15 @@ const ProblemPage = () => {
           )}
           <span className="inline">Submit</span>
         </button>
+
+        <button
+          className="btn btn-sm btn-outline flex items-center gap-1 rounded-md"
+          onClick={handleResetCode}
+          disabled={!isCodeModified || isRunning || isExecuting}
+        >
+          <RefreshCcw className="w-4 h-4" />
+          <span className="inline">Reset</span>
+        </button>
       </div>
 
       {/* Right: Language, Bookmark, Share, Theme */}
@@ -293,6 +324,7 @@ const ProblemPage = () => {
           className="select select-sm select-primary w-32 text-sm"
           value={selectedLanguage}
           onChange={handleLanguageChange}
+          disabled={isRunning || isExecuting}
         >
           {Object.keys(problem.codeSnippets || {}).map((lang) => (
             <option key={lang} value={lang}>
@@ -331,7 +363,7 @@ const ProblemPage = () => {
               language={selectedLanguage.toLowerCase()}
               theme={theme === "light" ? "vs" : "vs-dark"}
               value={code}
-              onChange={(value) => setCode(value || "")}
+              onChange={handleCodeChange}
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
@@ -427,7 +459,7 @@ const ProblemPage = () => {
                     language={selectedLanguage.toLowerCase()}
                     theme={theme === "light" ? "vs" : "vs-dark"}
                     value={code}
-                    onChange={(value) => setCode(value || "")}
+                    onChange={handleCodeChange}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
