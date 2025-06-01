@@ -22,34 +22,38 @@ const ProblemSolvedByUser = () => {
     switch (difficulty) {
       case "EASY":
         return (
-          <span className="badge gap-1 text-success bg-success/10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-success bg-success/10">
             <CheckCircle size={12} />
             Easy
           </span>
         );
       case "MEDIUM":
         return (
-          <span className="badge gap-1 text-warning bg-warning/10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-warning bg-warning/10">
             <Circle size={12} />
             Medium
           </span>
         );
       case "HARD":
         return (
-          <span className="badge gap-1 text-error bg-error/10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-error bg-error/10">
             <AlertTriangle size={12} />
             Hard
           </span>
         );
       default:
-        return <span className="badge badge-ghost">Unknown</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-base-200">
+            Unknown
+          </span>
+        );
     }
   };
 
   if (isProblemsLoading || solvedProblems === undefined) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin" />
+        <Loader className="size-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -73,107 +77,109 @@ const ProblemSolvedByUser = () => {
   ];
 
   return (
-    <div className="w-full flex-1 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
-      <div className="w-full flex flex-col gap-8">
-        <div>
-          <h1 className="text-4xl font-bold text-start mb-2">
+    <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
+      <div className="w-full">
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-start mb-3">
             Solved <span className="text-primary">Problems</span>
           </h1>
-          <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">
-            Review the problems you have solved and track your progress.
+          <p className="text-base sm:text-lg text-base-content/70">
+            Track your progress and review the problems you've conquered.
           </p>
         </div>
 
-        {/* Stats Tabs */}
-        <div className="bg-base-200 rounded-xl p-2 flex items-center justify-between max-w-md">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {stats.map(({ label, count, color }) => (
             <div
               key={label}
-              className={`flex flex-col items-center cursor-pointer rounded-lg px-5 py-3
-                  text-${color} font-semibold
-                  hover:bg-${color}/20 transition-colors duration-200
-                `}
+              className={`flex flex-col items-center justify-center p-4 rounded-xl bg-base-200 shadow-sm hover:shadow-md transition-shadow duration-300 border-l-4 border-${color}`}
             >
-              <span className={`text-2xl font-bold text-${color}`}>
+              <span className={`text-3xl font-bold text-${color}`}>
                 {count}
               </span>
-              <span className="text-sm">{label}</span>
+              <span className="text-sm font-medium text-base-content/80">
+                {label}
+              </span>
             </div>
           ))}
         </div>
 
+        {/* Problems Section */}
         {solvedProblems.length === 0 ? (
-          <div className="bg-base-100 rounded-xl shadow p-6">
-            <h3 className="text-lg font-semibold mb-2">
-              No problems solved yet
+          <div className="bg-base-200 rounded-xl p-6 sm:p-8 text-center shadow-sm">
+            <h3 className="text-xl font-semibold mb-3">
+              No Problems Solved Yet
             </h3>
             <p className="text-base-content/70 mb-4">
-              Start solving problems to see them listed here!
+              Start solving problems to see your achievements here!
             </p>
-            <Link to="/home" className="btn btn-primary">
-              View Problems
+            <Link to="/home" className="btn btn-primary btn-md">
+              Explore Problems
             </Link>
           </div>
         ) : (
-          <>
-            <div className="bg-base-100 rounded-xl shadow overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                  <thead>
-                    <tr className="text-sm text-base-content">
-                      <th className="bg-base-300">Problem</th>
-                      <th className="bg-base-300">Difficulty</th>
-                      <th className="bg-base-300">Tags</th>
-                      <th className="bg-base-300 text-center">Actions</th>
+          <div className="bg-base-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr className="text-sm text-base-content/80 bg-base-300">
+                    <th className="px-4 py-3">Problem</th>
+                    <th className="px-4 py-3">Difficulty</th>
+                    <th className="px-4 py-3">Tags</th>
+                    <th className="px-4 py-3 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {solvedProblems.map((problem) => (
+                    <tr
+                      key={problem.id}
+                      className="hover:bg-base-300/50 transition-colors duration-200"
+                    >
+                      <td className="px-4 py-3 font-medium text-base-content">
+                        {problem.title}
+                      </td>
+                      <td className="px-4 py-3">
+                        {getDifficultyBadge(problem.difficulty)}
+                      </td>
+                      <td className="px-4 py-3 min-w-[150px]">
+                        <div className="flex flex-wrap gap-2">
+                          {problem.tags?.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="badge badge-outline badge-primary text-xs flex items-center gap-1"
+                            >
+                              <Tag size={10} />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <Link
+                          to={`/problem/${problem.id}`}
+                          className="btn btn-sm btn-outline btn-primary flex items-center gap-1"
+                        >
+                          <ExternalLink size={14} />
+                          View
+                        </Link>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {solvedProblems.map((problem) => (
-                      <tr
-                        key={problem.id}
-                        className="hover:bg-base-200 transition-colors duration-200"
-                      >
-                        <td className="font-medium">{problem.title}</td>
-                        <td>{getDifficultyBadge(problem.difficulty)}</td>
-                        <td className="min-w-[120px]">
-                          <div className="flex flex-wrap gap-1">
-                            {problem.tags?.map((tag, index) => (
-                              <span
-                                key={index}
-                                className="badge badge-outline badge-primary flex items-center gap-1"
-                              >
-                                <Tag size={10} />
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="text-center">
-                          <Link
-                            to={`/problem/${problem.id}`}
-                            className="btn btn-sm btn-outline btn-primary"
-                          >
-                            <ExternalLink size={14} className="mr-1" />
-                            View
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="bg-base-200 p-4 flex justify-between items-center">
-                <span className="text-sm">
-                  Total problems solved:{" "}
-                  <span className="font-bold">{solvedProblems.length}</span>
-                </span>
-                <Link to="/home" className="btn btn-sm btn-primary">
-                  Solve more problems
-                </Link>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </>
+            <div className="bg-base-300 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <span className="text-sm font-medium">
+                Total problems solved:{" "}
+                <span className="font-bold">{solvedProblems.length}</span>
+              </span>
+              <Link to="/home" className="btn btn-sm btn-primary">
+                Solve More Problems
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>
