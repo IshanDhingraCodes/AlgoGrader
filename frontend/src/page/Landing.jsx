@@ -1,5 +1,5 @@
 import React from "react";
-import ThemeToggle from "../components/ui/themeToggle";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const Landing = () => {
   return (

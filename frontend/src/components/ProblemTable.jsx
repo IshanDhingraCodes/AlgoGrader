@@ -19,6 +19,8 @@ const ProblemTable = ({ problems }) => {
     useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
 
+  const [playlistCreationSource, setPlaylistCreationSource] = useState("none");
+
   // Extract all unique tags from problems
   const allTags = useMemo(() => {
     if (!Array.isArray(problems)) return [];
@@ -31,10 +33,29 @@ const ProblemTable = ({ problems }) => {
 
   const handleCreatePlaylist = async (data) => {
     await createPlaylist(data);
+    setIsCreateModalOpen(false);
+
+    if (playlistCreationSource === "fromAddToPlaylist") {
+      setIsAddToPlaylistModalOpen(true);
+    }
+    setPlaylistCreationSource("none");
   };
+
   const handleAddToPlaylist = (problemId) => {
     setSelectedProblemId(problemId);
+    setPlaylistCreationSource("fromAddToPlaylist");
     setIsAddToPlaylistModalOpen(true);
+  };
+
+  const handleOpenCreatePlaylistModalFromTopLevel = () => {
+    setPlaylistCreationSource("topLevel");
+    setIsCreateModalOpen(true);
+  };
+
+  // This function is called by AddToPlaylist when it detects no playlists
+  const handleOpenCreatePlaylistModalFromAddToPlaylist = () => {
+    setIsAddToPlaylistModalOpen(false);
+    setIsCreateModalOpen(true);
   };
 
   // Filter problems based on search, difficulty, and tags
@@ -61,12 +82,12 @@ const ProblemTable = ({ problems }) => {
   }, [filteredProblems, currentPage]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto mt-10">
+    <div className="w-full mt-10">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
         <button
           className="btn btn-primary gap-2 rounded-lg"
-          onClick={() => setIsCreateModalOpen(true)}
+          onClick={handleOpenCreatePlaylistModalFromTopLevel}
         >
           <Plus className="w-4 h-4" />
           Create Playlist
@@ -225,6 +246,7 @@ const ProblemTable = ({ problems }) => {
         isOpen={isAddToPlaylistModalOpen}
         onClose={() => setIsAddToPlaylistModalOpen(false)}
         problemId={selectedProblemId}
+        onCreatePlaylistClick={handleOpenCreatePlaylistModalFromAddToPlaylist}
       />
     </div>
   );

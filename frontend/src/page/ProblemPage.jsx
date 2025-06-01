@@ -17,11 +17,13 @@ import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
 import { useThemeStore } from "../store/useThemeStore";
+import { usePlaylistStore } from "../store/usePlaylistStore";
 import { getLanguageId } from "../lib/lang";
 import SubmissionResults from "../components/SubmissionResults";
 import SubmissionsList from "../components/SubmissionList";
 import ThemeToggle from "../components/ui/ThemeToggle";
 import AddToPlaylist from "../components/AddToPlaylist";
+import CreatePlaylistModal from "../components/CreatePlaylistModal";
 import { shareProblem } from "../lib/shareProblemUrl";
 
 const ProblemPage = () => {
@@ -44,11 +46,14 @@ const ProblemPage = () => {
     submissionCount,
   } = useSubmissionStore();
   const { theme } = useThemeStore();
+  const { createPlaylist } = usePlaylistStore();
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
+    useState(false);
+  const [isCreatePlaylistModalOpen, setIsCreatePlaylistModalOpen] =
     useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
 
@@ -87,8 +92,8 @@ const ProblemPage = () => {
         const stdin = problem.testcases.map((tc) => tc.input);
         const expected_outputs = problem.testcases.map((tc) => tc.output);
 
-        await executeCode(code, language_id, stdin, expected_outputs, id); // wait for execution
-        await getSubmissionCountForProblem(id); // now update count
+        await executeCode(code, language_id, stdin, expected_outputs, id);
+        await getSubmissionCountForProblem(id);
       } catch (error) {
         console.log("Error executing code", error);
       }
@@ -114,8 +119,19 @@ const ProblemPage = () => {
     }
   }, [code, selectedLanguage, problem, runcode]);
 
-  const handleAddToPlaylist = (id) => {
-    setSelectedProblemId(id);
+  const handleAddToPlaylist = (problemId) => {
+    setSelectedProblemId(problemId);
+    setIsAddToPlaylistModalOpen(true);
+  };
+
+  const handleOpenCreatePlaylistFromAdd = () => {
+    setIsAddToPlaylistModalOpen(false);
+    setIsCreatePlaylistModalOpen(true);
+  };
+
+  const handleCreatePlaylist = async (data) => {
+    await createPlaylist(data);
+    setIsCreatePlaylistModalOpen(false);
     setIsAddToPlaylistModalOpen(true);
   };
 
@@ -518,6 +534,12 @@ const ProblemPage = () => {
         isOpen={isAddToPlaylistModalOpen}
         onClose={() => setIsAddToPlaylistModalOpen(false)}
         problemId={selectedProblemId}
+        onCreatePlaylistClick={handleOpenCreatePlaylistFromAdd}
+      />
+      <CreatePlaylistModal
+        isOpen={isCreatePlaylistModalOpen}
+        onClose={() => setIsCreatePlaylistModalOpen(false)}
+        onSubmit={handleCreatePlaylist}
       />
     </div>
   );

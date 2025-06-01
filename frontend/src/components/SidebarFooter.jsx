@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { LogOut } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import { Link } from "react-router-dom";
-import ThemeToggle from "./ui/themeToggle";
+import ThemeToggle from "./ui/ThemeToggle";
 const SidebarFooter = () => {
   const { authUser } = useAuthStore();
 

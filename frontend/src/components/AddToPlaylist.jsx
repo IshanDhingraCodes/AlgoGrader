@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { X, Plus, Loader } from "lucide-react";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 
-const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
+const AddToPlaylist = ({
+  isOpen,
+  onClose,
+  problemId,
+  onCreatePlaylistClick,
+}) => {
   const { playlists, getAllPlaylists, addProblemToPlaylist, isLoading } =
     usePlaylistStore();
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
@@ -12,6 +17,13 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
       getAllPlaylists();
     }
   }, [getAllPlaylists, isOpen]);
+
+  useEffect(() => {
+    if (isOpen && !isLoading && playlists.length === 0) {
+      onCreatePlaylistClick();
+      onClose();
+    }
+  }, [isOpen, isLoading, playlists, onCreatePlaylistClick, onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,48 +69,69 @@ const AddToPlaylist = ({ isOpen, onClose, problemId }) => {
             >
               Select Playlist
             </label>
-            <select
-              id="playlist-select"
-              className="select select-bordered w-full"
-              value={selectedPlaylist}
-              onChange={(e) => setSelectedPlaylist(e.target.value)}
-              disabled={isLoading}
-              required
-            >
-              <option value="" disabled>
-                Choose a playlist
-              </option>
-              {playlists.map((playlist) => (
-                <option key={playlist.id} value={playlist.id}>
-                  {playlist.name}
+            {isLoading ? (
+              <div className="flex justify-center items-center h-20">
+                <Loader className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : playlists.length > 0 ? (
+              <select
+                id="playlist-select"
+                className="select select-bordered w-full"
+                value={selectedPlaylist}
+                onChange={(e) => setSelectedPlaylist(e.target.value)}
+                disabled={isLoading}
+                required
+              >
+                <option value="" disabled>
+                  Choose a playlist
                 </option>
-              ))}
-            </select>
+                {playlists.map((playlist) => (
+                  <option key={playlist.id} value={playlist.id}>
+                    {playlist.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="text-center py-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onCreatePlaylistClick();
+                    onClose();
+                  }}
+                  className="btn btn-primary btn-sm flex items-center gap-2 mx-auto"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-outline btn-sm"
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm flex items-center gap-2"
-              disabled={!selectedPlaylist || isLoading}
-            >
-              {isLoading ? (
-                <Loader className="h-4 w-4 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
-              Add to Playlist
-            </button>
-          </div>
+          {playlists.length > 0 && (
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-outline btn-sm"
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary btn-sm flex items-center gap-2"
+                disabled={!selectedPlaylist || isLoading}
+              >
+                {isLoading ? (
+                  <Loader className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                Add to Playlist
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
