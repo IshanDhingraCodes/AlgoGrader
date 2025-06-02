@@ -127,7 +127,7 @@ export const removeProblemFromPlaylist = asyncHandler(async (req, res) => {
       .json(new ApiError(400, "Invalid or missing problemsId"));
   }
 
-  const deleteProblem = await db.problemsInPlaylist.deleteMany({
+  const deleteProblem = await db.problemInPlaylist.deleteMany({
     where: {
       playlistId,
       problemId: {
