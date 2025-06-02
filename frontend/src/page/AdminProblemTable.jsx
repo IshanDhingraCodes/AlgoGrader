@@ -51,7 +51,7 @@ const AdminProblemTable = () => {
       );
   }, [problems, search, difficulty, selectedTag]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
   const paginatedProblems = useMemo(() => {
     return filteredProblems.slice(
@@ -70,9 +70,9 @@ const AdminProblemTable = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
-      <div className="w-full max-w-6xl mx-auto mt-10">
+      <div className="w-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Problems</h2>
+          <h2 className="text-4xl font-bold text-start">Problems</h2>
         </div>
 
         {/* filters */}
