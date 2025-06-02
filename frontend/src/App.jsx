@@ -19,6 +19,7 @@ import ProfilePage from "./page/ProfilePage";
 import AdminProblemTable from "./page/AdminProblemTable";
 import UpdateProblem from "./page/UpdateProblem";
 import { useThemeStore } from "./store/useThemeStore";
+import UserProblemTable from "./page/UserProblemTable";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -73,6 +74,10 @@ const App = () => {
             element={authUser ? <HomePage /> : <Navigate to={"/"} />}
           />
           <Route
+            path="/problems"
+            element={authUser ? <UserProblemTable /> : <Navigate to={"/"} />}
+          />
+          <Route
             path="/submissions"
             element={authUser ? <AllSubmission /> : <Navigate to={"/"} />}
           />
@@ -95,7 +100,7 @@ const App = () => {
               element={authUser ? <AddProblem /> : <Navigate to="/" />}
             />
             <Route
-              path="/problems"
+              path="/admin/problems"
               element={authUser ? <AdminProblemTable /> : <Navigate to="/" />}
             />
             <Route

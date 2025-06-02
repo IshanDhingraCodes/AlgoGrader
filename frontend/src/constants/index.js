@@ -14,6 +14,11 @@ const sidebarLinks = [
     label: "Home",
   },
   {
+    icon: ArrowDownWideNarrow,
+    route: "/problems",
+    label: "All Problems",
+  },
+  {
     icon: Vote,
     route: "/solved-problems",
     label: "Solved Problems",
@@ -37,7 +42,7 @@ const adminLinks = [
   },
   {
     icon: ArrowDownWideNarrow,
-    route: "/problems",
+    route: "/admin/problems",
     label: "All Problems",
   },
 ];
