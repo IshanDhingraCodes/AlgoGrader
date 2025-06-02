@@ -1,9 +1,22 @@
-import React from "react";
-import { Mail, User, Shield } from "lucide-react";
+import React, { useEffect } from "react";
+import { Mail, User, Shield, List, CheckCircle } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useProblemStore } from "../store/useProblemStore";
+import { usePlaylistStore } from "../store/usePlaylistStore";
 
 const ProfilePage = () => {
   const { authUser } = useAuthStore();
+  const { solvedProblems, getSolvedProblemByUser } = useProblemStore();
+  const { playlists, getAllPlaylists } = usePlaylistStore();
+
+  useEffect(() => {
+    getSolvedProblemByUser();
+    getAllPlaylists();
+  }, [getSolvedProblemByUser, getAllPlaylists]);
+
+  const userPlaylists = playlists.filter(
+    (playlist) => playlist.userId === authUser.id
+  );
 
   return (
     <div className="flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 md:max-h-screen md:overflow-y-scroll">
@@ -35,9 +48,10 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* User Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3">
+      {/* User Stats Grid with equal height cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        {/* Email Card */}
+        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3 h-full">
           <div className="flex items-center gap-3 text-primary">
             <Mail className="w-5 h-5" />
             <h3 className="font-semibold text-sm">Email</h3>
@@ -45,7 +59,8 @@ const ProfilePage = () => {
           <p className="text-sm break-words">{authUser.email}</p>
         </div>
 
-        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3">
+        {/* User ID Card */}
+        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3 h-full">
           <div className="flex items-center gap-3 text-primary">
             <User className="w-5 h-5" />
             <h3 className="font-semibold text-sm">User ID</h3>
@@ -53,7 +68,8 @@ const ProfilePage = () => {
           <p className="text-sm break-words">{authUser.id}</p>
         </div>
 
-        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3">
+        {/* Role Card */}
+        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3 h-full">
           <div className="flex items-center gap-3 text-primary">
             <Shield className="w-5 h-5" />
             <h3 className="font-semibold text-sm">Role</h3>
@@ -64,6 +80,24 @@ const ProfilePage = () => {
               ? "Full system access"
               : "Limited access"}
           </span>
+        </div>
+
+        {/* Solved Problems Card */}
+        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3 h-full">
+          <div className="flex items-center gap-3 text-primary">
+            <CheckCircle className="w-5 h-5" />
+            <h3 className="font-semibold text-sm">Problems Solved</h3>
+          </div>
+          <p className="text-sm">{solvedProblems.length}</p>
+        </div>
+
+        {/* My Playlists Card */}
+        <div className="bg-base-200 p-6 rounded-xl shadow hover:shadow-md transition flex flex-col gap-3 h-full">
+          <div className="flex items-center gap-3 text-primary">
+            <List className="w-5 h-5" />
+            <h3 className="font-semibold text-sm">My Playlists</h3>
+          </div>
+          <p className="text-sm">{userPlaylists.length}</p>
         </div>
       </div>
     </div>
