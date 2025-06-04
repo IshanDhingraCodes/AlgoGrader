@@ -198,9 +198,9 @@ const AllSubmission = () => {
                       </h3>
                       <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
                         <pre className="p-4 min-h-[100px]">
-                          <code>
+                          <code className="flex -mt-5">
                             {Array.isArray(submission.stdin?.split?.("\n"))
-                              ? submission.stdin.split("\n").join("\n  ")
+                              ? submission.stdin.split("\n").join("\n")
                               : submission.stdin || "No input provided"}
                           </code>
                         </pre>
@@ -214,9 +214,9 @@ const AllSubmission = () => {
                       </h3>
                       <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
                         <pre className="p-4 min-h-[100px]">
-                          <code>
+                          <code className="flex -mt-5">
                             {Array.isArray(JSON.parse(submission.stdout))
-                              ? JSON.parse(submission.stdout).join("\n  ")
+                              ? JSON.parse(submission.stdout).join("\n")
                               : submission.stdout || "No output"}
                           </code>
                         </pre>

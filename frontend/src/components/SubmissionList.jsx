@@ -167,9 +167,9 @@ const SubmissionsList = ({ submissions, isLoading }) => {
                     </h3>
                     <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
                       <pre className="p-4 min-h-[100px]">
-                        <code>
+                        <code className="flex -mt-5">
                           {Array.isArray(submission.stdin?.split?.("\n"))
-                            ? submission.stdin.split("\n").join("\n  ")
+                            ? submission.stdin.split("\n").join("\n")
                             : submission.stdin || "No input provided"}
                         </code>
                       </pre>
@@ -183,14 +183,14 @@ const SubmissionsList = ({ submissions, isLoading }) => {
                     </h3>
                     <div className="mockup-code bg-neutral text-neutral-content flex-grow overflow-auto rounded-2xl">
                       <pre className="p-4 min-h-[100px]">
-                        <code>
+                        <code className="flex -mt-5">
                           {(() => {
                             try {
                               const parsedStdout = JSON.parse(
                                 submission.stdout
                               );
                               return Array.isArray(parsedStdout)
-                                ? parsedStdout.join("\n  ")
+                                ? parsedStdout.join("\n")
                                 : submission.stdout || "No output";
                             } catch (error) {
                               console.error(
