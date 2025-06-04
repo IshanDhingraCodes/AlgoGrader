@@ -106,11 +106,23 @@ const Hero = () => {
           transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
           aria-label="Main headline: Practice And Progress Elevate Your Programming Skills for Algorithm Problem Solving"
         >
-          <span className="gradient-text-primary-accent lg:text-[100px]">
+          <span
+            className={`${
+              !isDarkMode
+                ? "gradient-text-primary-accent"
+                : "dark-gradient-text-black-white"
+            } lg:text-[100px]`}
+          >
             Practice
           </span>{" "}
           And{" "}
-          <span className="gradient-text-primary-accent lg:text-[100px]">
+          <span
+            className={`${
+              !isDarkMode
+                ? "gradient-text-primary-accent"
+                : "dark-gradient-text-black-white"
+            } lg:text-[100px]`}
+          >
             Progress
           </span>{" "}
           Elevate Your Programming Skills
@@ -140,7 +152,14 @@ const Hero = () => {
             className="aspect-auto rounded-3xl relative origin-center border-8 border-base-300 overflow-hidden z-20 bg-base-100 dark:bg-neutral"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ rotateX, scale }}
+            style={{
+              rotateX,
+              scale,
+              maskImage:
+                "linear-gradient(to bottom, black 60%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, black 60%, transparent 100%)",
+            }}
             transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
             aria-label="Promotional image of the algorithm problem solving platform"
           >
