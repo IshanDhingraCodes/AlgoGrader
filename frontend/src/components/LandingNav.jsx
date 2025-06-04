@@ -62,7 +62,7 @@ const LandingNav = () => {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "top-[1rem] bg-base-300 bg-opacity-70 dark:bg-neutral-900 backdrop-blur-md shadow-md rounded-xl"
+          ? "top-[1rem] bg-base-200 px-4 bg-opacity-10 backdrop-blur-md shadow-md rounded-xl"
           : "bg-transparent"
       }`}
     >
