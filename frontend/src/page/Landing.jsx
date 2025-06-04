@@ -1,12 +1,11 @@
 import React from "react";
-import ThemeToggle from "../components/ui/ThemeToggle";
+import LandingNav from "../components/LandingNav";
 
 const Landing = () => {
   return (
-    <div>
-      Landing
-      <ThemeToggle />
-    </div>
+    <main className="max-w-[1440px] mx-auto px-4 select-none h-[1000px]">
+      <LandingNav />
+    </main>
   );
 };
 

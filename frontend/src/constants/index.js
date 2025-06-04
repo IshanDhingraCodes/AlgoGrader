@@ -47,4 +47,23 @@ const adminLinks = [
   },
 ];
 
-export { sidebarLinks, adminLinks };
+const NavLinks = [
+  {
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Home",
+    link: "/",
+  },
+];
+
+export { sidebarLinks, adminLinks, NavLinks };

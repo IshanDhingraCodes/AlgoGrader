@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import Lenis from "lenis";
 
 import { HomePage, Landing, SignInPage, SignUpPage } from "./page";
 import { useAuthStore } from "./store/useAuthStore";
@@ -29,6 +30,15 @@ const App = () => {
     checkAuth();
     initializeTheme();
   }, [checkAuth, initializeTheme]);
+
+  useEffect(() => {
+    const lenis = new Lenis();
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }, []);
 
   if (isCheckingAuth) {
     return (
