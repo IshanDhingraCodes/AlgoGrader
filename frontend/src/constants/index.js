@@ -7,6 +7,16 @@ import {
   ArrowDownWideNarrow,
 } from "lucide-react";
 
+import {
+  Google,
+  Figma,
+  Github,
+  Microsoft,
+  Netflix,
+  Notion,
+  Slack,
+} from "../assets/marqeeLogos";
+
 const sidebarLinks = [
   {
     icon: House,
@@ -67,3 +77,5 @@ const NavLinks = [
 ];
 
 export { sidebarLinks, adminLinks, NavLinks };
+
+export const logos = [Google, Figma, Github, Microsoft, Netflix, Notion, Slack];
