@@ -12,6 +12,7 @@ import {
   Bookmark,
   Share2,
   RefreshCcw,
+  MessageSquare,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
@@ -26,6 +27,7 @@ import ThemeToggle from "../components/ui/ThemeToggle";
 import AddToPlaylist from "../components/AddToPlaylist";
 import CreatePlaylistModal from "../components/CreatePlaylistModal";
 import { shareProblem } from "../lib/shareProblemUrl";
+import AIDiscussion from "../components/AIDiscussion";
 
 const ProblemPage = () => {
   const { id } = useParams();
@@ -41,7 +43,6 @@ const ProblemPage = () => {
   } = useExecutionStore();
   const {
     submission: submissions,
-    isLoading: isSubmissionsLoading,
     getSubmissionForProblem,
     getSubmissionCountForProblem,
     submissionCount,
@@ -225,26 +226,15 @@ const ProblemPage = () => {
           </div>
         );
       case "submissions":
-        return (
-          <SubmissionsList
-            submissions={submissions}
-            isLoading={isSubmissionsLoading}
-          />
-        );
+        return <SubmissionsList submissions={submissions} />;
       case "hints":
         return (
-          <div className="p-4">
-            {problem?.hints ? (
-              <div className="bg-base-200 p-4 rounded-lg shadow-sm text-base-content/80 text-sm md:text-base">
-                {problem.hints}
-              </div>
-            ) : (
-              <div className="text-center text-base-content/70 py-10">
-                No hints available
-              </div>
-            )}
+          <div className="prose max-w-none dark:prose-invert">
+            <p className="text-base-content/90">{problem.hints}</p>
           </div>
         );
+      case "ai-discussion":
+        return <AIDiscussion problemId={id} />;
       default:
         return null;
     }
@@ -353,10 +343,10 @@ const ProblemPage = () => {
   );
 
   return (
-    <div className="flex flex-col bg-gradient-to-br from-base-200 to-base-300 min-h-screen lg:h-screen">
+    <div className="flex flex-col h-full bg-gradient-to-br from-base-200 to-base-300 min-h-screen lg:h-screen">
       <Navbar />
-      <main className="flex-grow p-2">
-        <div className="block lg:hidden space-y-4">
+      <main className="flex flex-col h-full min-h-0 flex-1 p-2">
+        <div className="lg:hidden flex flex-col h-full min-h-0 space-y-4">
           <div className="h-[400px] bg-base-100 rounded-lg shadow-md">
             <Editor
               height="100%"
@@ -374,81 +364,60 @@ const ProblemPage = () => {
               }}
             />
           </div>
-          <div className="bg-base-100 rounded-lg shadow-md p-4">
-            {submission ? (
-              <SubmissionResults submission={submission} />
-            ) : runResult ? (
-              <SubmissionResults submission={runResult} />
-            ) : (
-              <>
-                <h3 className="text-lg font-bold text-base-content mb-4">
-                  Test Cases
-                </h3>
-                <div className="overflow-x-auto border border-base-300 rounded-lg">
-                  <table className="table w-full table-zebra text-sm">
-                    <thead className="bg-base-200">
-                      <tr>
-                        <th className="p-2 text-sm">Input</th>
-                        <th className="p-2 text-sm">Expected Output</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {problem.testcases.map((tc, index) => (
-                        <tr key={index}>
-                          <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
-                            {tc.input}
-                          </td>
-                          <td className="font-mono whitespace-pre-wrap p-2 text-xs md:text-sm">
-                            {tc.output}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="bg-base-100 rounded-lg shadow-md">
+          <div className="bg-base-100 rounded-lg shadow-md flex flex-col h-full min-h-0">
             <div className="tabs p-2 border-b border-base-300">
-              {["description", "submissions", "hints"].map((tab) => {
-                const icons = {
-                  description: FileText,
-                  submissions: Code2,
-                  hints: Lightbulb,
-                };
-                const Icon = icons[tab];
-                return (
-                  <button
-                    key={tab}
-                    role="tab"
-                    aria-selected={activeTab === tab}
-                    className={`tab flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                      activeTab === tab
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "hover:bg-base-200 text-base-content/70"
-                    }`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    {tab === "submissions" && submissionCount > 0 && (
-                      <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
-                        {submissionCount}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+              {["description", "submissions", "hints", "ai-discussion"].map(
+                (tab) => {
+                  const icons = {
+                    description: FileText,
+                    submissions: Code2,
+                    hints: Lightbulb,
+                    "ai-discussion": MessageSquare,
+                  };
+                  const Icon = icons[tab];
+                  return (
+                    <button
+                      key={tab}
+                      role="tab"
+                      aria-selected={activeTab === tab}
+                      className={`tab flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                        activeTab === tab
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "hover:bg-base-200 text-base-content/70"
+                      }`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tab === "ai-discussion"
+                        ? "AI Discussion"
+                        : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      {tab === "submissions" && submissionCount > 0 && (
+                        <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
+                          {submissionCount}
+                        </span>
+                      )}
+                    </button>
+                  );
+                }
+              )}
             </div>
-            <div className="p-4">{renderTabContent()}</div>
+            <div className="flex-1 min-h-0 overflow-y-auto p-4">
+              {renderTabContent()}
+            </div>
           </div>
         </div>
 
-        <div className="hidden lg:block h-[calc(100vh-5rem)]">
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={55} minSize={30} className="pr-2">
-              <PanelGroup direction="vertical">
+        <div className="hidden lg:flex flex-1 min-h-0 h-full">
+          <PanelGroup direction="horizontal" className="flex-1 min-h-0 h-full">
+            <Panel
+              defaultSize={55}
+              minSize={30}
+              className="pr-2 flex flex-col h-full min-h-0"
+            >
+              <PanelGroup
+                direction="vertical"
+                className="flex-1 min-h-0 h-full"
+              >
                 <Panel
                   defaultSize={60}
                   minSize={20}
@@ -523,39 +492,44 @@ const ProblemPage = () => {
                 <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-3 h-14 rounded-full bg-gray-500 backdrop-blur-sm border border-base-300 shadow-sm group-hover:shadow-md group-hover:bg-accent group-hover:scale-105 transition-all duration-300"></div>
               </div>
             </PanelResizeHandle>
-            <Panel className="bg-base-100 rounded-lg shadow-md overflow-y-auto">
+            <Panel className="bg-base-100 rounded-lg shadow-md flex flex-col h-full min-h-0">
               <div className="tabs p-2 border-b border-base-300">
-                {["description", "submissions", "hints"].map((tab) => {
-                  const icons = {
-                    description: FileText,
-                    submissions: Code2,
-                    hints: Lightbulb,
-                  };
-                  const Icon = icons[tab];
-                  return (
-                    <button
-                      key={tab}
-                      role="tab"
-                      aria-selected={activeTab === tab}
-                      className={`tab flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                        activeTab === tab
-                          ? "bg-accent text-accent-content font-semibold"
-                          : "hover:bg-accent text-accent-content"
-                      }`}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      {tab === "submissions" && submissionCount > 0 && (
-                        <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
-                          {submissionCount}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                {["description", "submissions", "hints", "ai-discussion"].map(
+                  (tab) => {
+                    const icons = {
+                      description: FileText,
+                      submissions: Code2,
+                      hints: Lightbulb,
+                      "ai-discussion": MessageSquare,
+                    };
+                    const Icon = icons[tab];
+                    return (
+                      <button
+                        key={tab}
+                        role="tab"
+                        aria-selected={activeTab === tab}
+                        className={`tab flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                          activeTab === tab
+                            ? "bg-accent text-accent-content font-semibold"
+                            : "hover:bg-accent text-accent-content"
+                        }`}
+                        onClick={() => setActiveTab(tab)}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {tab === "ai-discussion"
+                          ? "AI Discussion"
+                          : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        {tab === "submissions" && submissionCount > 0 && (
+                          <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
+                            {submissionCount}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  }
+                )}
               </div>
-              <div className="p-4 overflow-y-auto h-full">
+              <div className="flex-1 min-h-0 overflow-y-auto p-4">
                 {renderTabContent()}
               </div>
             </Panel>
