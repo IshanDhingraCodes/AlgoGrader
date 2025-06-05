@@ -13,8 +13,10 @@ import {
   Share2,
   RefreshCcw,
   MessageSquare,
+  ChevronLeft,
+  ChevronRight as ChevronRightIcon,
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
@@ -31,7 +33,8 @@ import AIDiscussion from "../components/AIDiscussion";
 
 const ProblemPage = () => {
   const { id } = useParams();
-  const { getProblemById, problem, isProblemLoading } = useProblemStore();
+  const navigate = useNavigate();
+  const { getProblemById, problem, isProblemLoading, problems, getAllProblems } = useProblemStore();
   const {
     isExecuting,
     submission,
@@ -67,7 +70,8 @@ const ProblemPage = () => {
   useEffect(() => {
     getProblemById(id);
     getSubmissionCountForProblem(id);
-  }, [getProblemById, getSubmissionCountForProblem, id]);
+    getAllProblems();
+  }, [getProblemById, getSubmissionCountForProblem, getAllProblems, id]);
 
   useEffect(() => {
     if (problem) {
@@ -163,6 +167,22 @@ const ProblemPage = () => {
     shareProblem(problem.title, url);
   };
 
+  const handlePreviousProblem = () => {
+    if (!problems) return;
+    const currentIndex = problems.findIndex(p => p.id === id);
+    if (currentIndex > 0) {
+      navigate(`/problem/${problems[currentIndex - 1].id}`);
+    }
+  };
+
+  const handleNextProblem = () => {
+    if (!problems) return;
+    const currentIndex = problems.findIndex(p => p.id === id);
+    if (currentIndex < problems.length - 1) {
+      navigate(`/problem/${problems[currentIndex + 1].id}`);
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "description":
@@ -248,99 +268,127 @@ const ProblemPage = () => {
     );
   }
 
-  const Navbar = () => (
-    <nav className="navbar bg-base-100 shadow px-4 py-3 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-      {/* Left: Breadcrumb */}
-      <div className="flex flex-wrap items-center gap-2 text-sm md:text-base text-base-content/80">
-        <Link to="/" className="flex items-center gap-1 hover:text-primary">
-          <Home className="w-5 h-5" />
-          <span className="hidden sm:inline">Home</span>
-        </Link>
-        <ChevronRight className="w-4 h-4 text-base-content/50" />
-        <span className="text-base-content/60 font-medium truncate max-w-[10rem] sm:max-w-[15rem]">
-          Problems
-        </span>
-        <ChevronRight className="w-4 h-4 text-base-content/50" />
-        <span className="font-semibold text-base-content truncate max-w-[12rem] sm:max-w-[20rem]">
-          {problem.title}
-        </span>
-      </div>
+  const Navbar = () => {
+    const currentIndex = problems ? problems.findIndex(p => p.id === id) : -1;
+    const isFirstProblem = currentIndex <= 0;
+    const isLastProblem = currentIndex >= (problems?.length || 0) - 1;
 
-      {/* Center: Run, Submit, and Reset */}
-      <div className="flex flex-wrap justify-center gap-2">
-        <button
-          onClick={handleRunCode}
-          disabled={isRunning || isExecuting}
-          className={`btn btn-sm btn-outline btn-primary flex items-center gap-1 rounded-md ${
-            isRunning || isExecuting ? "opacity-70" : "hover:bg-primary/70"
-          }`}
-        >
-          {isRunning ? (
-            <span className="loading loading-spinner loading-xs"></span>
-          ) : (
-            <Terminal className="w-4 h-4" />
-          )}
-          <span className="inline">Run Code</span>
-        </button>
+    return (
+      <nav className="navbar bg-base-100 shadow px-4 py-3 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        {/* Left: Breadcrumb and Navigation */}
+        <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm md:text-base text-base-content/80">
+            <Link to="/" className="flex items-center gap-1 hover:text-primary">
+              <Home className="w-5 h-5" />
+              <span className="hidden sm:inline">Home</span>
+            </Link>
+            <ChevronRight className="w-4 h-4 text-base-content/50" />
+            <span className="text-base-content/60 font-medium truncate max-w-[10rem] sm:max-w-[15rem]">
+              Problems
+            </span>
+            <ChevronRight className="w-4 h-4 text-base-content/50" />
+            <span className="font-semibold text-base-content truncate max-w-[12rem] sm:max-w-[20rem]">
+              {problem.title}
+            </span>
+            <div className="flex items-center gap-1 ml-3">
+              <button
+                onClick={handlePreviousProblem}
+                disabled={!problems || isFirstProblem}
+                className="btn btn-xs md:btn-sm rounded-full border border-base-300 bg-base-200 hover:bg-base-300 transition disabled:opacity-50 disabled:cursor-not-allowed px-2 py-1 mx-1"
+                title="Previous Problem"
+                style={{ minWidth: 32, minHeight: 32 }}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleNextProblem}
+                disabled={!problems || isLastProblem}
+                className="btn btn-xs md:btn-sm rounded-full border border-base-300 bg-base-200 hover:bg-base-300 transition disabled:opacity-50 disabled:cursor-not-allowed px-2 py-1 mx-1"
+                title="Next Problem"
+                style={{ minWidth: 32, minHeight: 32 }}
+              >
+                <ChevronRightIcon className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <button
-          onClick={handleSubmitCode}
-          disabled={isExecuting || isRunning}
-          className={`btn btn-sm btn-outline btn-success flex items-center gap-1 rounded-md ${
-            isExecuting || isRunning ? "opacity-70" : "hover:bg-success/10"
-          }`}
-        >
-          {isExecuting ? (
-            <span className="loading loading-spinner loading-xs"></span>
-          ) : (
-            <ThumbsUp className="w-4 h-4" />
-          )}
-          <span className="inline">Submit</span>
-        </button>
+        {/* Center: Run, Submit, and Reset */}
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={handleRunCode}
+            disabled={isRunning || isExecuting}
+            className={`btn btn-sm btn-outline btn-primary flex items-center gap-1 rounded-md ${
+              isRunning || isExecuting ? "opacity-70" : "hover:bg-primary/70"
+            }`}
+          >
+            {isRunning ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <Terminal className="w-4 h-4" />
+            )}
+            <span className="inline">Run Code</span>
+          </button>
 
-        <button
-          className="btn btn-sm btn-outline flex items-center gap-1 rounded-md"
-          onClick={handleResetCode}
-          disabled={!isCodeModified || isRunning || isExecuting}
-        >
-          <RefreshCcw className="w-4 h-4" />
-          <span className="inline">Reset</span>
-        </button>
-      </div>
+          <button
+            onClick={handleSubmitCode}
+            disabled={isExecuting || isRunning}
+            className={`btn btn-sm btn-outline btn-success flex items-center gap-1 rounded-md ${
+              isExecuting || isRunning ? "opacity-70" : "hover:bg-success/10"
+            }`}
+          >
+            {isExecuting ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <ThumbsUp className="w-4 h-4" />
+            )}
+            <span className="inline">Submit</span>
+          </button>
 
-      {/* Right: Language, Bookmark, Share, Theme */}
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <select
-          className="select select-sm select-primary w-32 text-sm"
-          value={selectedLanguage}
-          onChange={handleLanguageChange}
-          disabled={isRunning || isExecuting}
-        >
-          {Object.keys(problem.codeSnippets || {}).map((lang) => (
-            <option key={lang} value={lang}>
-              {lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()}
-            </option>
-          ))}
-        </select>
+          <button
+            className="btn btn-sm btn-outline flex items-center gap-1 rounded-md"
+            onClick={handleResetCode}
+            disabled={!isCodeModified || isRunning || isExecuting}
+          >
+            <RefreshCcw className="w-4 h-4" />
+            <span className="inline">Reset</span>
+          </button>
+        </div>
 
-        <button
-          className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
-          onClick={() => handleAddToPlaylist(id)}
-        >
-          <Bookmark className="w-4 h-4" />
-        </button>
+        {/* Right: Language, Bookmark, Share, Theme */}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <select
+            className="select select-sm select-primary w-32 text-sm"
+            value={selectedLanguage}
+            onChange={handleLanguageChange}
+            disabled={isRunning || isExecuting}
+          >
+            {Object.keys(problem.codeSnippets || {}).map((lang) => (
+              <option key={lang} value={lang}>
+                {lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()}
+              </option>
+            ))}
+          </select>
 
-        <button
-          className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
-          onClick={handleShare}
-        >
-          <Share2 className="w-4 h-4" />
-        </button>
+          <button
+            className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
+            onClick={() => handleAddToPlaylist(id)}
+          >
+            <Bookmark className="w-4 h-4" />
+          </button>
 
-        <ThemeToggle />
-      </div>
-    </nav>
-  );
+          <button
+            className="btn btn-sm rounded-sm hover:bg-accent/70 flex items-center gap-1"
+            onClick={handleShare}
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+
+          <ThemeToggle />
+        </div>
+      </nav>
+    );
+  };
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-base-200 to-base-300 min-h-screen lg:h-screen">
