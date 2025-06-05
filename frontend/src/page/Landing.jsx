@@ -2,6 +2,7 @@ import React from "react";
 import LandingNav from "../components/LandingNav";
 import Hero from "../components/Hero";
 import LogoMarquee from "../components/LogoMarquee";
+import Features from "../components/Features";
 
 const Landing = () => {
   return (
@@ -9,6 +10,7 @@ const Landing = () => {
       <LandingNav />
       <Hero />
       <LogoMarquee />
+      <Features />
     </main>
   );
 };
