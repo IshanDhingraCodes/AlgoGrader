@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { Send, Bot, User } from "lucide-react";
 import { useAIDiscussionStore } from "../store/useAIDiscussionStore";
 
-const AIDiscussion = ({ problemId }) => {
+const AIDiscussion = ({ problemId, selectedLanguage }) => {
   const { messages, isLoading, sendMessage, addUserMessage, clearMessages } =
     useAIDiscussionStore();
 
@@ -27,8 +27,7 @@ const AIDiscussion = ({ problemId }) => {
 
     const userMessage = input.trim();
     setInput("");
-    addUserMessage(userMessage);
-    await sendMessage(problemId, userMessage);
+    await sendMessage(problemId, userMessage, selectedLanguage);
   };
 
   return (

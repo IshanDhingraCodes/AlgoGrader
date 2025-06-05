@@ -234,7 +234,7 @@ const ProblemPage = () => {
           </div>
         );
       case "ai-discussion":
-        return <AIDiscussion problemId={id} />;
+        return <AIDiscussion problemId={id} selectedLanguage={selectedLanguage} />;
       default:
         return null;
     }

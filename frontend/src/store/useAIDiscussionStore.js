@@ -16,7 +16,13 @@ export const useAIDiscussionStore = create((set) => ({
       });
       const data = response.data;
       
-      set({ messages: data.history });
+      set((state) => ({
+        messages: [
+          ...state.messages,
+          { role: "user", content: message },
+          { role: "assistant", content: data.response }
+        ]
+      }));
     } catch (error) {
       console.error('Error:', error);
       let errorMsg = 'Sorry, I encountered an error. Please try again.';
