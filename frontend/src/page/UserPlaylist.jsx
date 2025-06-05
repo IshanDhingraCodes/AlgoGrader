@@ -24,8 +24,7 @@ const UserPlaylist = () => {
     removeProblemFromPlaylist,
   } = usePlaylistStore();
 
-  const { getSubmissionCountForProblem, submissionCount } =
-    useSubmissionStore();
+  const { getSubmissionCountForProblem, getCountForProblem } = useSubmissionStore();
 
   const [expandedPlaylist, setExpandedPlaylist] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -44,14 +43,14 @@ const UserPlaylist = () => {
           for (const item of playlist.problems) {
             const problemId = item.problem.id;
             await getSubmissionCountForProblem(problemId);
-            solved[problemId] = submissionCount > 0;
+            solved[problemId] = getCountForProblem(problemId) > 0;
           }
         }
       }
       setSolvedProblems(solved);
     };
     fetchSubmissionCounts();
-  }, [playlists, getSubmissionCountForProblem, submissionCount]);
+  }, [playlists, getSubmissionCountForProblem, getCountForProblem]);
 
   const togglePlaylist = (id) => {
     setExpandedPlaylist((prev) => (prev === id ? null : id));

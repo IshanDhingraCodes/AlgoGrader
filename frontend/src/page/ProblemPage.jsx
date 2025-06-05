@@ -48,7 +48,7 @@ const ProblemPage = () => {
     submission: submissions,
     getSubmissionForProblem,
     getSubmissionCountForProblem,
-    submissionCount,
+    getCountForProblem,
   } = useSubmissionStore();
   const { theme } = useThemeStore();
   const { createPlaylist } = usePlaylistStore();
@@ -439,9 +439,9 @@ const ProblemPage = () => {
                       {tab === "ai-discussion"
                         ? "AI Discussion"
                         : tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      {tab === "submissions" && submissionCount > 0 && (
+                      {tab === "submissions" && getCountForProblem(id) > 0 && (
                         <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
-                          {submissionCount}
+                          {getCountForProblem(id)}
                         </span>
                       )}
                     </button>
@@ -567,9 +567,9 @@ const ProblemPage = () => {
                         {tab === "ai-discussion"
                           ? "AI Discussion"
                           : tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        {tab === "submissions" && submissionCount > 0 && (
+                        {tab === "submissions" && getCountForProblem(id) > 0 && (
                           <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
-                            {submissionCount}
+                            {getCountForProblem(id)}
                           </span>
                         )}
                       </button>
