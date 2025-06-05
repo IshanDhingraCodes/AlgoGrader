@@ -20,7 +20,7 @@ const ProfilePage = () => {
   const { authUser } = useAuthStore();
   const { solvedProblems, getAllProblems, getSolvedProblemByUser } =
     useProblemStore();
-  const { playlists } = usePlaylistStore();
+  const { playlists, getAllPlaylists } = usePlaylistStore();
   const { getAllSubmissions, submissions } = useSubmissionStore();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,6 +34,7 @@ const ProfilePage = () => {
           getAllProblems(),
           getSolvedProblemByUser(),
           getAllSubmissions(),
+          getAllPlaylists(),
         ]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -44,7 +45,7 @@ const ProfilePage = () => {
       }
     };
     fetchData();
-  }, [getAllProblems, getSolvedProblemByUser, getAllSubmissions]);
+  }, [getAllProblems, getSolvedProblemByUser, getAllSubmissions, getAllPlaylists]);
 
   const userPlaylists = useMemo(() => {
     if (!playlists || !authUser) return [];
