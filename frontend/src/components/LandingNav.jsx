@@ -94,12 +94,12 @@ const LandingNav = () => {
         <ul className="navbar-center hidden md:flex gap-4">
           {NavLinks.map((nav, i) => (
             <li key={i} className="group">
-              <Link
-                to={nav.link}
+              <a
+                href={nav.link}
                 className="relative text-base font-medium text-base-content/70 px-3 py-2 transition-all duration-200 ease-in-out hover:text-primary hover:scale-[1.05]"
               >
                 {nav.title}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>

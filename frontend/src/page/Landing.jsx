@@ -8,6 +8,7 @@ import Features from "../components/Features";
 import Feedback from "../components/Feedback";
 import Footer from "../components/Footer";
 import QNA from "../components/QNA";
+import CallToAction from "../components/CallToAction";
 
 const Landing = () => {
   useEffect(() => {
@@ -27,6 +28,7 @@ const Landing = () => {
       <Features />
       <Feedback />
       <QNA />
+      <CallToAction />
       <Footer />
     </main>
   );

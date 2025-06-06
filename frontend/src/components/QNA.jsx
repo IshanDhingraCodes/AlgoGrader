@@ -6,7 +6,7 @@ const QNA = () => {
   const theme = useThemeStore((state) => state.theme);
   const isDarkMode = theme === "black";
   return (
-    <div className="my-20 max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto" id="qna">
       <div
         className="max-w-4xl mx-auto text-center my-20"
         role="banner"

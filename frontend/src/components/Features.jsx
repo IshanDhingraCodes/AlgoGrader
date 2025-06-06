@@ -20,6 +20,7 @@ const Features = () => {
       className="my-20 px-4 sm:px-6 md:px-10"
       aria-label="Features and Benefits"
       role="region"
+      id="feature"
     >
       <div
         className="max-w-3xl mx-auto text-center"

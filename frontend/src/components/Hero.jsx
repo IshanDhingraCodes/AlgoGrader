@@ -23,6 +23,7 @@ const Hero = () => {
     <section
       className="relative min-h-[calc(100vh-5rem)] overflow-hidden"
       aria-label="Hero Section of Algorithm Problem Solving Website"
+      id="home"
     >
       <div
         className={`absolute inset-0 pointer-events-none ${

@@ -60,19 +60,19 @@ const adminLinks = [
 const NavLinks = [
   {
     title: "Home",
-    link: "/",
+    link: "#home",
   },
   {
-    title: "Home",
-    link: "/",
+    title: "Features",
+    link: "#feature",
   },
   {
-    title: "Home",
-    link: "/",
+    title: "Testimonial",
+    link: "#testimonial",
   },
   {
-    title: "Home",
-    link: "/",
+    title: "QNA",
+    link: "#qna",
   },
 ];
 

@@ -44,7 +44,7 @@ const Feedback = () => {
       className="w-full flex flex-col items-center overflow-hidden"
       role="main"
       aria-label="Student Testimonials Section"
-      id="feedback"
+      id="testimonial"
     >
       <div className="max-w-3xl mx-auto text-center mb-5 sm:my-20">
         <p
