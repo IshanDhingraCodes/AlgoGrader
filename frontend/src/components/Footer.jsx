@@ -3,7 +3,7 @@ import { logo } from "../assets";
 
 const Footer = () => {
   return (
-    <div className="flex flex-wrap items-center justify-center md:justify-between py-5 border-t border-base-300 gap-10 my-20">
+    <div className="flex flex-wrap items-center justify-center md:justify-between py-5 border-t border-base-300 gap-10 mt-28">
       <div className="flex items-center justify-center gap-2">
         <button
           onClick={() => {

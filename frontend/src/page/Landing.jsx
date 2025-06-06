@@ -7,6 +7,7 @@ import LogoMarquee from "../components/LogoMarquee";
 import Features from "../components/Features";
 import Feedback from "../components/Feedback";
 import Footer from "../components/Footer";
+import QNA from "../components/QNA";
 
 const Landing = () => {
   useEffect(() => {
@@ -25,6 +26,7 @@ const Landing = () => {
       <LogoMarquee />
       <Features />
       <Feedback />
+      <QNA />
       <Footer />
     </main>
   );

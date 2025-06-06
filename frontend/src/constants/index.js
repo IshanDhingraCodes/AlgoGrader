@@ -153,4 +153,31 @@ const feedbacks = [
   },
 ];
 
-export { sidebarLinks, adminLinks, NavLinks, logos, feedbacks };
+const questions = [
+  {
+    ques: "How do I create an account?",
+    ans: "Click the 'Get Started' button in the top right corner and complete the registration form to get started.",
+  },
+  {
+    ques: "How can I solve coding problems on the platform?",
+    ans: "Navigate to the 'Problems' section, choose a problem, and start solving it using the built-in code editor. You can run and submit your solution directly.",
+  },
+  {
+    ques: "Where can I view my progress and stats?",
+    ans: "Your curated statistics, including accuracy, and solved problems, can be found under the 'Dashboard' or 'Profile' section.",
+  },
+  {
+    ques: "Can I track my progress on specific topics?",
+    ans: "Yes, you can create custom playlists for different topics or difficulty levels. Each playlist includes a progress bar to help you track completion.",
+  },
+  {
+    ques: "Where can I find my previous submissions?",
+    ans: "All your past submissions are saved and can be accessed from the 'Submissions' tab or from your profile.",
+  },
+  {
+    ques: "Can I get help with a problem?",
+    ans: "Yes! You can discuss problems with our AI assistant directly. Just click on 'Ask AI' when viewing a problem to get hints, explanations, or debugging help.",
+  },
+];
+
+export { sidebarLinks, adminLinks, NavLinks, logos, feedbacks, questions };
