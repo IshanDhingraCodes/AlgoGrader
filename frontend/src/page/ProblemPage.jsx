@@ -30,11 +30,18 @@ import AddToPlaylist from "../components/AddToPlaylist";
 import CreatePlaylistModal from "../components/CreatePlaylistModal";
 import { shareProblem } from "../lib/shareProblemUrl";
 import AIDiscussion from "../components/AIDiscussion";
+import { useAIDiscussionStore } from "../store/useAIDiscussionStore";
 
 const ProblemPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getProblemById, problem, isProblemLoading, problems, getAllProblems } = useProblemStore();
+  const {
+    getProblemById,
+    problem,
+    isProblemLoading,
+    problems,
+    getAllProblems,
+  } = useProblemStore();
   const {
     isExecuting,
     submission,
@@ -52,6 +59,7 @@ const ProblemPage = () => {
   } = useSubmissionStore();
   const { theme } = useThemeStore();
   const { createPlaylist } = usePlaylistStore();
+  const { clearMessages } = useAIDiscussionStore();
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
@@ -86,6 +94,10 @@ const ProblemPage = () => {
       getSubmissionForProblem(id);
     }
   }, [activeTab, getSubmissionForProblem, id]);
+
+  useEffect(() => {
+    clearMessages();
+  }, [clearMessages]);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -169,7 +181,7 @@ const ProblemPage = () => {
 
   const handlePreviousProblem = () => {
     if (!problems) return;
-    const currentIndex = problems.findIndex(p => p.id === id);
+    const currentIndex = problems.findIndex((p) => p.id === id);
     if (currentIndex > 0) {
       navigate(`/problem/${problems[currentIndex - 1].id}`);
     }
@@ -177,7 +189,7 @@ const ProblemPage = () => {
 
   const handleNextProblem = () => {
     if (!problems) return;
-    const currentIndex = problems.findIndex(p => p.id === id);
+    const currentIndex = problems.findIndex((p) => p.id === id);
     if (currentIndex < problems.length - 1) {
       navigate(`/problem/${problems[currentIndex + 1].id}`);
     }
@@ -254,7 +266,9 @@ const ProblemPage = () => {
           </div>
         );
       case "ai-discussion":
-        return <AIDiscussion problemId={id} selectedLanguage={selectedLanguage} />;
+        return (
+          <AIDiscussion problemId={id} selectedLanguage={selectedLanguage} />
+        );
       default:
         return null;
     }
@@ -269,7 +283,7 @@ const ProblemPage = () => {
   }
 
   const Navbar = () => {
-    const currentIndex = problems ? problems.findIndex(p => p.id === id) : -1;
+    const currentIndex = problems ? problems.findIndex((p) => p.id === id) : -1;
     const isFirstProblem = currentIndex <= 0;
     const isLastProblem = currentIndex >= (problems?.length || 0) - 1;
 
@@ -567,11 +581,12 @@ const ProblemPage = () => {
                         {tab === "ai-discussion"
                           ? "AI Discussion"
                           : tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        {tab === "submissions" && getCountForProblem(id) > 0 && (
-                          <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
-                            {getCountForProblem(id)}
-                          </span>
-                        )}
+                        {tab === "submissions" &&
+                          getCountForProblem(id) > 0 && (
+                            <span className="badge badge-sm badge-primary/70 ml-2 rounded-full">
+                              {getCountForProblem(id)}
+                            </span>
+                          )}
                       </button>
                     );
                   }

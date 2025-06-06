@@ -2,26 +2,32 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
-export const useAIDiscussionStore = create((set) => ({
+export const useAIDiscussionStore = create((set, get) => ({
   messages: [],
   isLoading: false,
   error: null,
+  currentProblemId: null,
 
-  sendMessage: async (problemId, message) => {
+  sendMessage: async (problemId, message, selectedLanguage) => {
     try {
       set({ isLoading: true, error: null });
+      const { messages } = get();
       const response = await axiosInstance.post('/ai/discuss', {
         problemId,
         message,
+        language: selectedLanguage,
+        history: messages,
       });
       const data = response.data;
-      
       set((state) => ({
         messages: [
           ...state.messages,
-          { role: "user", content: message },
-          { role: "assistant", content: data.response }
-        ]
+          { role: "user", content: message, timestamp: new Date() },
+          { role: "assistant", content: data.response, timestamp: new Date() }
+        ],
+        isLoading: false,
+        error: null,
+        currentProblemId: problemId
       }));
     } catch (error) {
       console.error('Error:', error);
@@ -43,10 +49,8 @@ export const useAIDiscussionStore = create((set) => ({
         }
       }
       
-      set({ error: errorMsg });
+      set({ error: errorMsg, isLoading: false });
       toast.error(errorMsg);
-    } finally {
-      set({ isLoading: false });
     }
   },
 
@@ -57,7 +61,7 @@ export const useAIDiscussionStore = create((set) => ({
   },
 
   clearMessages: () => {
-    set({ messages: [], error: null });
+    set({ messages: [], error: null, currentProblemId: null });
   },
 
   setError: (error) => {

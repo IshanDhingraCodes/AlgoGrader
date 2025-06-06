@@ -1,9 +1,19 @@
 import React, { useRef, useEffect } from "react";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, Clock, HelpCircle } from "lucide-react";
 import { useAIDiscussionStore } from "../store/useAIDiscussionStore";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+const SUGGESTED_QUESTIONS = [
+  "Can you explain the problem in simpler terms?",
+  "What's the time complexity of the optimal solution?",
+  "Can you provide a step-by-step approach?",
+  "What are the edge cases I should consider?",
+  "Can you explain the key algorithm/data structure needed?",
+];
 
 const AIDiscussion = ({ problemId, selectedLanguage }) => {
-  const { messages, isLoading, sendMessage, addUserMessage, clearMessages } =
+  const { messages, isLoading, sendMessage, clearMessages, currentProblemId } =
     useAIDiscussionStore();
 
   const [input, setInput] = React.useState("");
@@ -14,8 +24,10 @@ const AIDiscussion = ({ problemId, selectedLanguage }) => {
   };
 
   useEffect(() => {
-    clearMessages();
-  }, [problemId, clearMessages]);
+    if (currentProblemId !== problemId) {
+      clearMessages();
+    }
+  }, [clearMessages, currentProblemId, problemId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -30,6 +42,44 @@ const AIDiscussion = ({ problemId, selectedLanguage }) => {
     await sendMessage(problemId, userMessage, selectedLanguage);
   };
 
+  const formatTimestamp = (date) => {
+    return new Date(date).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const renderMessage = (message) => {
+    const hasCode = message.content.includes("```");
+    if (!hasCode) {
+      return <p className="whitespace-pre-wrap">{message.content}</p>;
+    }
+
+    const parts = message.content.split(/(```[\s\S]*?```)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith("```") && part.endsWith("```")) {
+        const code = part.slice(3, -3).trim();
+        const language = code.split("\n")[0];
+        const codeContent = code.split("\n").slice(1).join("\n");
+        return (
+          <SyntaxHighlighter
+            key={index}
+            language={language || "plaintext"}
+            style={vscDarkPlus}
+            className="rounded-md my-2"
+          >
+            {codeContent}
+          </SyntaxHighlighter>
+        );
+      }
+      return (
+        <p key={index} className="whitespace-pre-wrap">
+          {part}
+        </p>
+      );
+    });
+  };
+
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -39,10 +89,25 @@ const AIDiscussion = ({ problemId, selectedLanguage }) => {
             <p className="text-lg font-medium">
               Ask me anything about this problem!
             </p>
-            <p className="text-sm mt-2">
+            <p className="text-sm mt-2 mb-6">
               I can help you understand the problem, suggest approaches, or
               explain concepts.
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+              {SUGGESTED_QUESTIONS.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setInput(question);
+                    scrollToBottom();
+                  }}
+                  className="flex items-center gap-2 p-3 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors"
+                >
+                  <HelpCircle className="w-4 h-4 text-primary" />
+                  <span className="text-sm">{question}</span>
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           messages.map((message, index) => (
@@ -64,7 +129,13 @@ const AIDiscussion = ({ problemId, selectedLanguage }) => {
                     : "bg-base-200"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                {renderMessage(message)}
+                <div className="flex items-center gap-1 mt-2 text-xs opacity-70">
+                  <Clock className="w-3 h-3" />
+                  <span>
+                    {formatTimestamp(message.timestamp || new Date())}
+                  </span>
+                </div>
               </div>
               {message.role === "user" && (
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
