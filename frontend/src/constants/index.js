@@ -76,6 +76,81 @@ const NavLinks = [
   },
 ];
 
-export { sidebarLinks, adminLinks, NavLinks };
+const logos = [Google, Figma, Github, Microsoft, Netflix, Notion, Slack];
 
-export const logos = [Google, Figma, Github, Microsoft, Netflix, Notion, Slack];
+const feedbacks = [
+  {
+    content:
+      "Day 2 on the platform and I’m already hooked! 🔥 The personalized playlists and progress charts are game-changers. Makes coding practice so much more structured.",
+    name: "Aarav Mehta",
+    title: "Student",
+  },
+  {
+    content:
+      "Big thanks to the team for creating such an awesome coding platform. Love how easy it is to track my improvement over time! 📈",
+    name: "Neha Sharma",
+    title: "Student",
+  },
+  {
+    content:
+      "Just received my ‘Code Warrior’ badge 👕 — such a cool way to stay motivated! This platform really makes learning to code fun. 💻🚀",
+    name: "Rohan Verma",
+    title: "Student",
+  },
+  {
+    content:
+      "Explored custom playlists and different problem types today. The platform lets me experiment with my own learning path. Brilliant! 🤓💡",
+    name: "Divya Kapoor",
+    title: "Student",
+  },
+  {
+    content:
+      "This team is full of innovation! The visual stats, the curated challenges — everything is designed to push you forward. Highly recommend! 👏",
+    name: "Siddharth Rao",
+    title: "Founder",
+  },
+  {
+    content:
+      "Just won ₹10K in a coding contest on the platform! 🎉 Incredible feeling — thank you for keeping things exciting and rewarding!",
+    name: "Ishita Desai",
+    title: "Student",
+  },
+  {
+    content:
+      "Day 2 on the platform and I’m already hooked! 🔥 The personalized playlists and progress charts are game-changers. Makes coding practice so much more structured.",
+    name: "Aarav Mehta",
+    title: "Student",
+  },
+  {
+    content:
+      "Big thanks to the team for creating such an awesome coding platform. Love how easy it is to track my improvement over time! 📈",
+    name: "Neha Sharma",
+    title: "Student",
+  },
+  {
+    content:
+      "Just received my ‘Code Warrior’ badge 👕 — such a cool way to stay motivated! This platform really makes learning to code fun. 💻🚀",
+    name: "Rohan Verma",
+    title: "Student",
+  },
+  {
+    content:
+      "Explored custom playlists and different problem types today. The platform lets me experiment with my own learning path. Brilliant! 🤓💡",
+    name: "Divya Kapoor",
+    title: "Student",
+  },
+  {
+    content:
+      "This team is full of innovation! The visual stats, the curated challenges — everything is designed to push you forward. Highly recommend! 👏",
+    name: "Siddharth Rao",
+    title: "Founder",
+  },
+  {
+    content:
+      "Just won ₹10K in a coding contest on the platform! 🎉 Incredible feeling — thank you for keeping things exciting and rewarding!",
+    name: "Ishita Desai",
+    title: "Student",
+  },
+];
+
+export { sidebarLinks, adminLinks, NavLinks, logos, feedbacks };
