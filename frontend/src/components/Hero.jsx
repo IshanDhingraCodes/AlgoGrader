@@ -129,9 +129,9 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          className="md:text-lg mt-10 max-w-screen-lg sm:text-center text-justify mx-4 text-gray-600"
+          className="md:text-lg mt-10 max-w-screen-lg sm:text-center text-justify mx-4 text-sm text-base-content font-semibold"
           initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 0.8, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
           aria-label="Description of platform features for algorithm problem solving"
         >

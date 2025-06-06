@@ -9,7 +9,7 @@ const LogoMarquee = () => {
   return (
     <div className="md:mt-36" aria-label="Logo showcase section">
       <div className="max-w-2xl mx-auto text-center my-10 tracking-wider">
-        <p className="sm:text-lg text-sm text-gray-500 mx-4 ">
+        <p className="sm:text-lg text-sm text-base-content opacity-80 mx-4 ">
           Start Your Journey with Us —{" "}
           <span
             className={`font-bold ${
@@ -19,7 +19,7 @@ const LogoMarquee = () => {
             End Up Anywhere.
           </span>
         </p>
-        <p className="sm:text-lg text-sm text-gray-500 mx-4 ">
+        <p className="sm:text-lg text-sm text-base-content opacity-80 mx-4 ">
           Our learners go from{" "}
           <span
             className={`font-bold ${
