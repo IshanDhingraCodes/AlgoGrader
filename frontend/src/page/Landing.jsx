@@ -6,6 +6,7 @@ import Hero from "../components/Hero";
 import LogoMarquee from "../components/LogoMarquee";
 import Features from "../components/Features";
 import Feedback from "../components/Feedback";
+import Footer from "../components/Footer";
 
 const Landing = () => {
   useEffect(() => {
@@ -24,6 +25,7 @@ const Landing = () => {
       <LogoMarquee />
       <Features />
       <Feedback />
+      <Footer />
     </main>
   );
 };

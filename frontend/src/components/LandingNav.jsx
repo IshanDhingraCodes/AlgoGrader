@@ -83,7 +83,7 @@ const LandingNav = () => {
             <img
               src={logo}
               alt="AlgoGrader logo"
-              className="w-10 h-10 rounded-full"
+              className="w-10 h-10"
               loading="eager"
             />
             AlgoGrader
