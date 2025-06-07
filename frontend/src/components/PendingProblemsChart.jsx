@@ -1,4 +1,3 @@
-// components/PendingProblemsChart.jsx
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -21,6 +20,8 @@ const PendingProblemsChart = ({ total, solved }) => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     cutout: "70%",
     plugins: {
       legend: {
@@ -40,8 +41,10 @@ const PendingProblemsChart = ({ total, solved }) => {
   };
 
   return (
-    <div className="w-44 md:w-56 mx-auto text-center">
-      <Doughnut data={data} options={options} />
+    <div className="flex justify-center items-center w-full h-full">
+      <div className="w-44 md:w-56 text-center">
+        <Doughnut data={data} options={options} />
+      </div>
     </div>
   );
 };

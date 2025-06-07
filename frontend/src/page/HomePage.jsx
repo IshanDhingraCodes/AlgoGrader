@@ -56,9 +56,7 @@ const HomePage = () => {
           <TotalProblemsChart problems={problems} />
         </div>
         <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition">
-          <h3 className="text-sm font-medium text-center mb-4">
-            Pending Overview
-          </h3>
+          <h3 className="text-sm font-medium text-center ">Pending Overview</h3>
           <PendingProblemsChart
             total={problems.length}
             solved={solvedProblems.length}
