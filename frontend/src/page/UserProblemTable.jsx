@@ -178,7 +178,7 @@ const UserProblemTable = () => {
                             problem.difficulty === "EASY"
                               ? "badge-success"
                               : problem.difficulty === "MEDIUM"
-                              ? "badge-warning"
+                              ? "bg-orange-400"
                               : "badge-error"
                           }`}
                         >
