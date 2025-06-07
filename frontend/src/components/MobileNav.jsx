@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { adminLinks, sidebarLinks } from "../constants";
 import { Code, LogOut, Menu, X } from "lucide-react";
 import LogoutButton from "./LogoutButton";
-import ThemeToggle from "./ui/themeToggle";
+import ThemeToggle from "./ui/ThemeToggle";
 import { logo } from "../assets";
 
 const MobileNav = () => {
