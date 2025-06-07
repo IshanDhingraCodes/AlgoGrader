@@ -30,7 +30,6 @@ const App = () => {
     initializeTheme();
   }, [checkAuth, initializeTheme]);
 
-
   if (isCheckingAuth) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -52,11 +51,11 @@ const App = () => {
         <Route path="/" element={<AuthLayout />}>
           <Route
             path="/sign-in"
-            element={!authUser ? <SignInPage /> : <Navigate to={"/home"} />}
+            element={!authUser ? <SignInPage /> : <Temp />}
           />
           <Route
             path="/sign-up"
-            element={!authUser ? <SignUpPage /> : <Navigate to={"/home"} />}
+            element={!authUser ? <SignUpPage /> : <Temp />}
           />
           <Route
             path="/forgot-password"
@@ -117,6 +116,14 @@ const App = () => {
       </Routes>
     </>
   );
+};
+
+const Temp = () => {
+  useEffect(() => {
+    window.location.href = "/home";
+  }, []);
+
+  return null;
 };
 
 export default App;
