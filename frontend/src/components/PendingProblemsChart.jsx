@@ -42,7 +42,7 @@ const PendingProblemsChart = ({ total, solved }) => {
 
   return (
     <div className="flex justify-center items-center w-full h-full">
-      <div className="w-44 md:w-56 text-center">
+      <div className="w-44 md:w-56 h-56 md:h-64 text-center">
         <Doughnut data={data} options={options} />
       </div>
     </div>

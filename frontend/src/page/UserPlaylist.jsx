@@ -24,7 +24,8 @@ const UserPlaylist = () => {
     removeProblemFromPlaylist,
   } = usePlaylistStore();
 
-  const { getSubmissionCountForProblem, getCountForProblem } = useSubmissionStore();
+  const { getSubmissionCountForProblem, getCountForProblem } =
+    useSubmissionStore();
 
   const [expandedPlaylist, setExpandedPlaylist] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -87,7 +88,7 @@ const UserPlaylist = () => {
           difficulty === "EASY"
             ? "badge-success"
             : difficulty === "MEDIUM"
-            ? "badge-warning"
+            ? "bg-orange-400"
             : "badge-error"
         }`}
       >

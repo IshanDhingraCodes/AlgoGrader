@@ -45,18 +45,16 @@ const HomePage = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition flex flex-col items-center justify-center">
-          <h3 className="text-sm font-semibold mb-4">Problems Solved</h3>
+        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition flex flex-col items-center justify-between min-h-[300px]">
+          <h3 className="text-md font-semibold">Problems Solved</h3>
           <DoughnutChart />
         </div>
-        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition">
-          <h3 className="text-sm font-medium mb-4 text-center">
-            Total Problems
-          </h3>
+        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition flex flex-col items-center justify-between min-h-[300px]">
+          <h3 className="text-md font-medium  text-center">Total Problems</h3>
           <TotalProblemsChart problems={problems} />
         </div>
-        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition">
-          <h3 className="text-sm font-medium text-center ">Pending Overview</h3>
+        <div className="bg-base-300 rounded-lg p-5 shadow hover:shadow-lg transition flex flex-col items-center justify-between min-h-[300px]">
+          <h3 className="text-md font-medium text-center">Pending Overview</h3>
           <PendingProblemsChart
             total={problems.length}
             solved={solvedProblems.length}
