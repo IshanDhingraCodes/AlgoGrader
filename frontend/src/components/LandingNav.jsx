@@ -45,17 +45,14 @@ const LandingNav = () => {
     exit: { opacity: 0, y: 10, transition: { duration: 0.2 } },
   };
 
-  const menuVariants = {
-    open: {
-      height: "auto",
-      width: 280,
-      transition: { duration: 0.3 },
-    },
-    close: {
-      height: 0,
-      width: 0,
-      transition: { duration: 0.3 },
-    },
+  const handleNavClick = (e, link) => {
+    e.preventDefault();
+    const id = link.replace("#", "");
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsActive(false);
   };
 
   return (
@@ -94,12 +91,12 @@ const LandingNav = () => {
         <ul className="navbar-center hidden md:flex gap-4">
           {NavLinks.map((nav, i) => (
             <li key={i} className="group">
-              <a
-                href={nav.link}
+              <button
+                onClick={(e) => handleNavClick(e, nav.link)}
                 className="relative text-base font-medium text-base-content/70 px-3 py-2 transition-all duration-200 ease-in-out hover:text-primary hover:scale-[1.05]"
               >
                 {nav.title}
-              </a>
+              </button>
             </li>
           ))}
         </ul>
@@ -116,15 +113,16 @@ const LandingNav = () => {
 
         {/* Mobile Menu */}
         <div className="md:hidden relative navbar-end" ref={menuRef}>
-          <motion.div
-            variants={menuVariants}
-            animate={isActive ? "open" : "close"}
-            initial="close"
-            className="absolute top-12 right-0 z-40 rounded-2xl overflow-hidden bg-base-300 dark:bg-base-200 shadow-xl backdrop-blur-md"
-          >
-            <AnimatePresence>
-              {isActive && (
-                <div className="h-full px-6 py-6 flex flex-col gap-6">
+          <AnimatePresence>
+            {isActive && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-12 right-0 z-40 rounded-2xl bg-base-300 dark:bg-base-200 shadow-xl backdrop-blur-md w-[260px]"
+              >
+                <div className="px-6 py-6 flex flex-col gap-6">
                   {NavLinks.map((nav, i) => (
                     <motion.div
                       key={i}
@@ -134,13 +132,12 @@ const LandingNav = () => {
                       animate="enter"
                       exit="exit"
                     >
-                      <a
-                        href={nav.link}
-                        className="block text-lg font-medium text-base-content px-3 py-2 rounded-xl hover:bg-base-200 hover:text-primary transition-all"
-                        onClick={() => setIsActive(false)}
+                      <button
+                        onClick={(e) => handleNavClick(e, nav.link)}
+                        className="block text-left w-full text-lg font-medium text-base-content px-3 py-2 rounded-xl hover:bg-base-200 hover:text-primary transition-all"
                       >
                         {nav.title}
-                      </a>
+                      </button>
                     </motion.div>
                   ))}
                   <motion.div
@@ -162,9 +159,9 @@ const LandingNav = () => {
                     </div>
                   </motion.div>
                 </div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Toggle Button */}
           <button
