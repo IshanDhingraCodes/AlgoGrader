@@ -134,13 +134,13 @@ const LandingNav = () => {
                       animate="enter"
                       exit="exit"
                     >
-                      <Link
-                        to={nav.link}
+                      <a
+                        href={nav.link}
                         className="block text-lg font-medium text-base-content px-3 py-2 rounded-xl hover:bg-base-200 hover:text-primary transition-all"
                         onClick={() => setIsActive(false)}
                       >
                         {nav.title}
-                      </Link>
+                      </a>
                     </motion.div>
                   ))}
                   <motion.div
