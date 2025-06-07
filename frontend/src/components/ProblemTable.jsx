@@ -52,7 +52,7 @@ const ProblemTable = ({ problems }) => {
     setIsCreateModalOpen(true);
   };
 
-  // This function is called by AddToPlaylist when it detects no playlists
+  //AddToPlaylist when it detects no playlists
   const handleOpenCreatePlaylistModalFromAddToPlaylist = () => {
     setIsAddToPlaylistModalOpen(false);
     setIsCreateModalOpen(true);
@@ -69,7 +69,12 @@ const ProblemTable = ({ problems }) => {
       )
       .filter((problem) =>
         selectedTag === "ALL" ? true : problem.tags?.includes(selectedTag)
-      );
+      )
+      .sort((a, b) => {
+        const aIsDemo = a.tags?.includes("Demo") ? 1 : 0;
+        const bIsDemo = b.tags?.includes("Demo") ? 1 : 0;
+        return bIsDemo - aIsDemo;
+      });
   }, [problems, search, difficulty, selectedTag]);
 
   const itemsPerPage = 5;
