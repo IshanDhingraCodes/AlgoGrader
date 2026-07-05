@@ -78,6 +78,7 @@ const result = climbStairs(n);
 
 console.log(result);
 rl.close();
+process.exit(0);
 });`,
     PYTHON: `class Solution:
   def climbStairs(self, n: int) -> int:
@@ -168,6 +169,7 @@ const result = climbStairs(n);
 
 console.log(result);
 rl.close();
+process.exit(0);
 });`,
     PYTHON: `class Solution:
   def climbStairs(self, n: int) -> int:
@@ -297,6 +299,7 @@ const sampleStringProblem = {
     const result = isPalindrome(line);
     console.log(result ? "true" : "false");
     rl.close();
+    process.exit(0);
   });`,
     PYTHON: `class Solution:
     def isPalindrome(self, s: str) -> bool:
@@ -361,6 +364,7 @@ public class Main {
     const result = isPalindrome(line);
     console.log(result ? "true" : "false");
     rl.close();
+    process.exit(0);
   });`,
     PYTHON: `class Solution:
     def isPalindrome(self, s: str) -> bool:
