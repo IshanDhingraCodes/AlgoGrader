@@ -57,7 +57,7 @@ const formatResponse = (text) => {
 
 const discussProblem = async (req, res) => {
   try {
-    const { problemId, message, history = [], language = 'Python' } = req.body;
+    const { problemId, message, history = [], language = "Python" } = req.body;
     const userId = req.user?.id;
 
     const problem = await db.problem.findUnique({
@@ -89,8 +89,11 @@ const discussProblem = async (req, res) => {
 
     // Format the conversation history for the prompt
     const formattedHistory = history
-      .map((msg) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
-      .join('\n');
+      .map(
+        (msg) =>
+          `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`,
+      )
+      .join("\n");
 
     const systemMessage = `${getSystemPrompt(problem, language)}
 
@@ -102,7 +105,7 @@ ${testCasesList}
 
 Conversation so far:\n${formattedHistory}\nUser: ${message}`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const result = await model.generateContent({
       contents: [
