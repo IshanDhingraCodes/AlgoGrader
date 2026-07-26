@@ -5,6 +5,7 @@ import { adminLinks, sidebarLinks } from "../constants";
 import { Code, LogOut, Menu, X } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import ThemeToggle from "./ui/ThemeToggle";
+import UserAvatar from "./UserAvatar";
 import { logo } from "../assets";
 
 const MobileNav = () => {
@@ -91,13 +92,7 @@ const MobileNav = () => {
               className={getLinkClasses("/profile")}
               onClick={toggleMenu}
             >
-              <img
-                src={
-                  authUser?.image || "https://avatar.iran.liara.run/public/boy"
-                }
-                alt="User Avatar"
-                className="object-cover size-5"
-              />
+              <UserAvatar user={authUser} className="size-5" />
               <p className="text-base font-semibold">My Profile</p>
             </Link>
             <LogoutButton>

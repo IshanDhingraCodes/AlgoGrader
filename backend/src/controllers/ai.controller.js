@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import rateLimit from "express-rate-limit";
 import { db } from "../libs/db.js";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const aiLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -12,14 +12,44 @@ const aiLimiter = rateLimit({
 
 const conversationHistory = new Map();
 
+const PREFERRED_MODELS = [
+  process.env.GEMINI_MODEL,
+  "gemini-3.5-flash",
+  "gemini-3.6-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-flash-latest",
+].filter(Boolean);
+
+const generateContentWithFallback = async (prompt) => {
+  let lastError = null;
+  for (const modelName of PREFERRED_MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent({
+        contents: [{ parts: [{ text: prompt }] }],
+      });
+      return result.response.text();
+    } catch (err) {
+      console.warn(`Gemini model '${modelName}' failed: ${err.message}. Trying next fallback...`);
+      lastError = err;
+    }
+  }
+  throw lastError || new Error("Failed to generate content with any AI model.");
+};
+
 const getSystemPrompt = (problem, language) => {
+  const tagsStr = Array.isArray(problem.tags)
+    ? problem.tags.join(", ")
+    : problem.tags || "None";
+
   return `You are a knowledgeable and supportive programming assistant helping a user with a coding problem.
 
 Problem Details:
 - **Title**: ${problem.title}
 - **Description**: ${problem.description}
 - **Difficulty**: ${problem.difficulty}
-- **Tags**: ${problem.tags.join(", ")}
+- **Tags**: ${tagsStr}
 - **Preferred Language**: ${language}
 
 Your role is to guide the user in understanding and solving this problem effectively. Follow these principles in your responses:
@@ -44,13 +74,11 @@ Be helpful, encouraging, and aim to improve the user's understanding with every 
 };
 
 const formatResponse = (text) => {
+  if (!text) return "";
   // Format code blocks with proper language specification
   text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
     return `\`\`\`${language || "plaintext"}\n${code.trim()}\n\`\`\``;
   });
-
-  // Add line breaks for better readability
-  text = text.replace(/\n\n/g, "\n\n");
 
   return text;
 };
@@ -60,6 +88,10 @@ const discussProblem = async (req, res) => {
     const { problemId, message, history = [], language = "Python" } = req.body;
     const userId = req.user?.id;
 
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: "Message content cannot be empty" });
+    }
+
     const problem = await db.problem.findUnique({
       where: { id: problemId },
     });
@@ -68,32 +100,48 @@ const discussProblem = async (req, res) => {
       return res.status(404).json({ error: "Problem not found" });
     }
 
-    const testcases = Array.isArray(problem.testcases)
-      ? problem.testcases
-      : JSON.parse(problem.testcases);
-    const constraints =
+    let testcases = [];
+    if (Array.isArray(problem.testcases)) {
+      testcases = problem.testcases;
+    } else if (typeof problem.testcases === "string") {
+      try {
+        testcases = JSON.parse(problem.testcases);
+      } catch (e) {
+        testcases = [];
+      }
+    }
+
+    const constraintsStr =
       typeof problem.constraints === "string"
         ? problem.constraints
-        : JSON.stringify(problem.constraints);
+        : problem.constraints
+        ? JSON.stringify(problem.constraints)
+        : "";
 
-    const constraintsList = constraints
+    const constraintsList = constraintsStr
       .split("\n")
       .map((c) => `- ${c}`)
+      .filter((c) => c.trim() !== "-")
       .join("\n");
-    const testCasesList = testcases
-      .map(
-        (tc, i) =>
-          `Test Case ${i + 1}:\nInput: ${tc.input}\nExpected Output: ${tc.output}`,
-      )
-      .join("\n\n");
+
+    const testCasesList = Array.isArray(testcases)
+      ? testcases
+          .map(
+            (tc, i) =>
+              `Test Case ${i + 1}:\nInput: ${tc.input}\nExpected Output: ${tc.output}`,
+          )
+          .join("\n\n")
+      : "";
 
     // Format the conversation history for the prompt
-    const formattedHistory = history
-      .map(
-        (msg) =>
-          `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`,
-      )
-      .join("\n");
+    const formattedHistory = Array.isArray(history)
+      ? history
+          .map(
+            (msg) =>
+              `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`,
+          )
+          .join("\n")
+      : "";
 
     const systemMessage = `${getSystemPrompt(problem, language)}
 
@@ -103,19 +151,13 @@ ${constraintsList}
 Test Cases:
 ${testCasesList}
 
-Conversation so far:\n${formattedHistory}\nUser: ${message}`;
+Conversation so far:
+${formattedHistory}
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+User: ${message}`;
 
-    const result = await model.generateContent({
-      contents: [
-        {
-          parts: [{ text: systemMessage }],
-        },
-      ],
-    });
-
-    const response = formatResponse(result.response.text());
+    const rawResponseText = await generateContentWithFallback(systemMessage);
+    const response = formatResponse(rawResponseText);
 
     res.json({
       response,
@@ -126,15 +168,10 @@ Conversation so far:\n${formattedHistory}\nUser: ${message}`;
     if (error.message?.includes("API key")) {
       return res.status(500).json({ error: "AI service configuration error" });
     }
-    if (error.message?.includes("quota")) {
+    if (error.message?.includes("quota") || error.status === 429) {
       return res.status(503).json({
         error:
           "AI service is currently overloaded. Please try again in a moment.",
-      });
-    }
-    if (error.message?.includes("model")) {
-      return res.status(500).json({
-        error: "AI model configuration error. Please contact support.",
       });
     }
 
@@ -149,3 +186,4 @@ const clearConversation = (userId, problemId) => {
 };
 
 export { discussProblem, aiLimiter, clearConversation };
+
